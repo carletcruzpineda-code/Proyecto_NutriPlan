@@ -8,33 +8,33 @@ from .views import (
     PlanNutricionalListCreateView, PlanNutricionalDetailView,
     PlanAlimentoListCreateView, PlanAlimentoDetailView
 )
+from .auth_views import LoginView, MeView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    # --- Usuarios ---
-    path('usuarios/', UsuarioListCreateView.as_view(), name="usuarios-list-create"),
-    path('usuarios/<int:pk>/', UsuarioDetailView.as_view(), name="usuarios-detail"),
+    path('usuarios/', UsuarioListCreateView.as_view()),
+    path('usuarios/<int:pk>/', UsuarioDetailView.as_view()),
 
-    # --- Indicadores de progreso ---
-    path('indicadores/', IndicadorProgresoListCreateView.as_view(), name="indicadores-list-create"),
-    path('indicadores/<int:pk>/', IndicadorProgresoDetailView.as_view(), name="indicadores-detail"),
+    path('indicadores/', IndicadorProgresoListCreateView.as_view()),
+    path('indicadores/<int:pk>/', IndicadorProgresoDetailView.as_view()),
 
-    # --- Artículos ---
-    path('articulos/', ArticuloListCreateView.as_view(), name="articulos-list-create"),
-    path('articulos/<int:pk>/', ArticuloDetailView.as_view(), name="articulos-detail"),
+    path('articulos/', ArticuloListCreateView.as_view()),
+    path('articulos/<int:pk>/', ArticuloDetailView.as_view()),
 
-    # --- Alimentos ---
-    path('alimentos/', AlimentoListCreateView.as_view(), name="alimentos-list-create"),
-    path('alimentos/<int:pk>/', AlimentoDetailView.as_view(), name="alimentos-detail"),
+    path('alimentos/', AlimentoListCreateView.as_view()),
+    path('alimentos/<int:pk>/', AlimentoDetailView.as_view()),
 
-    # --- Registro de consumo ---
-    path('registros/', RegistroConsumoListCreateView.as_view(), name="registros-list-create"),
-    path('registros/<int:pk>/', RegistroConsumoDetailView.as_view(), name="registros-detail"),
+    path('registros/', RegistroConsumoListCreateView.as_view()),
+    path('registros/<int:pk>/', RegistroConsumoDetailView.as_view()),
 
-    # --- Planes nutricionales ---
-    path('planes/', PlanNutricionalListCreateView.as_view(), name="planes-list-create"),
-    path('planes/<int:pk>/', PlanNutricionalDetailView.as_view(), name="planes-detail"),
+    path('planes/', PlanNutricionalListCreateView.as_view()),
+    path('planes/<int:pk>/', PlanNutricionalDetailView.as_view()),
 
-    # --- Relación plan-alimento ---
-    path('plan-alimentos/', PlanAlimentoListCreateView.as_view(), name="plan-alimentos-list-create"),
-    path('plan-alimentos/<int:pk>/', PlanAlimentoDetailView.as_view(), name="plan-alimentos-detail"),
+    path('plan-alimentos/', PlanAlimentoListCreateView.as_view()),
+    path('plan-alimentos/<int:pk>/', PlanAlimentoDetailView.as_view()),
+
+    # JWT
+    path('auth/login/', LoginView.as_view()),
+    path('auth/me/', MeView.as_view()),
+    path('auth/refresh/', TokenRefreshView.as_view()),
 ]

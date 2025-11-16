@@ -9,12 +9,10 @@ from pathlib import Path
 # --- RUTAS BASE ---
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # --- CONFIGURACIONES BÁSICAS ---
 SECRET_KEY = 'django-insecure-a7@=(d%v$p0yjb3)!9_o5*-zq3=dvc^wa8ac$9=6v664ejtq%q'
 DEBUG = True
 ALLOWED_HOSTS = ['*']  # permite conexiones desde cualquier origen (útil en desarrollo)
-
 
 # --- APLICACIONES INSTALADAS ---
 INSTALLED_APPS = [
@@ -27,26 +25,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Terceros
-    'rest_framework',      # Django REST Framework
-    'corsheaders',         # Permitir CORS (frontend/backend separados)
+    'rest_framework',
+    'corsheaders',
 
-    # Tus apps
-    'api',           # ✅ tu app actual (antes tenías 'api', cámbialo)
+    # Tu app
+    'api',
 ]
-
 
 # --- MIDDLEWARE ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # debe ir antes de CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 # --- CONFIGURACIÓN DE URLs Y WSGI ---
 ROOT_URLCONF = 'backend.urls'
@@ -68,19 +64,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # --- BASE DE DATOS ---
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',   # Cambiamos el motor
-        'NAME': 'nutriplan',            # 📌 nombre de la BD que creaste en MySQL Workbench
-        'USER': 'root',                         # 📌 tu usuario MySQL
-        'PASSWORD': 'canelo2026',            # 📌 tu contraseña MySQL
-        'HOST': 'localhost',                    # si estás usando XAMPP o local MySQL
-        'PORT': '3306',                         # puerto por defecto de MySQL
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nutriplan',
+        'USER': 'root',
+        'PASSWORD': 'canelo2026',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
-
 
 # --- VALIDADORES DE CONTRASEÑA ---
 AUTH_PASSWORD_VALIDATORS = [
@@ -90,20 +84,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # --- INTERNACIONALIZACIÓN ---
-LANGUAGE_CODE = 'es'  # cambiado a español
-TIME_ZONE = 'America/Costa_Rica'  # ajusta según tu país
+LANGUAGE_CODE = 'es'
+TIME_ZONE = 'America/Costa_Rica'
 USE_I18N = True
 USE_TZ = True
-
 
 # --- ARCHIVOS ESTÁTICOS ---
 STATIC_URL = 'static/'
 STATICFILES_DIRS = []
 
-
-# --- CONFIGURACIÓN DE DJANGO REST FRAMEWORK ---
+# --- CONFIGURACIÓN JWT ---
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -112,16 +103,27 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
-
-# --- CONFIGURACIÓN CORS ---
+# --- CORS ---
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # Frontend (React o Vue en modo desarrollo)
+    'http://localhost:5173',
 ]
-# Si deseas permitir cualquier origen temporalmente:
-# CORS_ALLOW_ALL_ORIGINS = True
-
 
 # --- LLAVE PRIMARIA POR DEFECTO ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- USUARIO PERSONALIZADO ---
+AUTH_USER_MODEL = "api.Usuario"
+
+# --- BACKENDS PARA LOGIN POR CORREO ---
+AUTHENTICATION_BACKENDS = [
+    "api.backends.CorreoBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]

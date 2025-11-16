@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from .models import (
@@ -17,11 +19,13 @@ from .serializers import (
 class UsuarioListCreateView(ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [AllowAny]   # registro público
 
 
 class UsuarioDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # ---------------------------
@@ -30,11 +34,15 @@ class UsuarioDetailView(RetrieveUpdateDestroyAPIView):
 class IndicadorProgresoListCreateView(ListCreateAPIView):
     queryset = IndicadorProgreso.objects.all()
     serializer_class = IndicadorProgresoSerializer
+    permission_classes = [IsAuthenticated]
+
 
 
 class IndicadorProgresoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = IndicadorProgreso.objects.all()
     serializer_class = IndicadorProgresoSerializer
+    permission_classes = [IsAuthenticated]
+
 
 
 # ---------------------------
@@ -43,11 +51,13 @@ class IndicadorProgresoDetailView(RetrieveUpdateDestroyAPIView):
 class ArticuloListCreateView(ListCreateAPIView):
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
+    permission_classes = [AllowAny]
 
 
 class ArticuloDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
+    permission_classes = [AllowAny]
 
 
 # ---------------------------
@@ -56,11 +66,13 @@ class ArticuloDetailView(RetrieveUpdateDestroyAPIView):
 class AlimentoListCreateView(ListCreateAPIView):
     queryset = Alimento.objects.all()
     serializer_class = AlimentoSerializer
+    permission_classes = [AllowAny]
 
 
 class AlimentoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Alimento.objects.all()
     serializer_class = AlimentoSerializer
+    permission_classes = [AllowAny]
 
 
 # ---------------------------
@@ -69,11 +81,13 @@ class AlimentoDetailView(RetrieveUpdateDestroyAPIView):
 class RegistroConsumoListCreateView(ListCreateAPIView):
     queryset = RegistroConsumo.objects.all()
     serializer_class = RegistroConsumoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class RegistroConsumoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = RegistroConsumo.objects.all()
     serializer_class = RegistroConsumoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # ---------------------------
@@ -82,11 +96,13 @@ class RegistroConsumoDetailView(RetrieveUpdateDestroyAPIView):
 class PlanNutricionalListCreateView(ListCreateAPIView):
     queryset = PlanNutricional.objects.all()
     serializer_class = PlanNutricionalSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class PlanNutricionalDetailView(RetrieveUpdateDestroyAPIView):
     queryset = PlanNutricional.objects.all()
     serializer_class = PlanNutricionalSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # ---------------------------
