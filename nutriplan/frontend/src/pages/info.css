@@ -1,0 +1,29 @@
+/* Fondo suave */
+body {
+  background-color: #f1fff7 !important;
+}
+
+/* Tarjetas */
+.info-card {
+  border-radius: 18px;
+  transition: 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 150, 90, 0.15);
+}
+
+/* Iconos */
+.icon-box {
+  width: 50px;
+  height: 50px;
+  background: #e8fff2;
+  color: #008f5a;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  margin-bottom: 10px;
+}

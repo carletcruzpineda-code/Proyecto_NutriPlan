@@ -5,6 +5,8 @@ import Register from "../pages/Register.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import MainLayout from "../components/MainLayout.jsx";
+import InfoNutricional from "../pages/InfoNutricional.jsx";
+
 
 export default function AppRoutes() {
   return (
@@ -27,6 +29,8 @@ export default function AppRoutes() {
 
       {/* Cualquier otra ruta */}
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/info" element={<InfoNutricional />} />
+
     </Routes>
   );
 }
