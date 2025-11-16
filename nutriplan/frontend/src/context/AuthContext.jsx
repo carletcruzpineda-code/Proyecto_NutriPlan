@@ -1,68 +1,53 @@
-import { createContext, useState, useEffect } from "react";
-import api from "../api/http.js";
+import { createContext, useContext, useState, useEffect } from "react";
+import http from "../api/http";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
-  const [cargando, setCargando] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("access");
-
-    if (!token) {
-      setCargando(false);
-      return;
-    }
-
-    api
-      .get("auth/me/")
-      .then((res) => {
-        setUsuario(res.data);
-      })
-      .catch(() => {
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
-        setUsuario(null);
-      })
-      .finally(() => {
-        setCargando(false);
-      });
-  }, []);
-
-  const login = async (correo, password) => {
+  async function login(correo, password) {
     try {
-      const res = await api.post("auth/login/", { correo, password });
+      const res = await http.post("auth/login/", { correo, password });
 
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
+      localStorage.setItem("usuario", JSON.stringify(res.data.usuario));
 
       setUsuario(res.data.usuario);
-      return { ok: true };
-    } catch (error) {
-      return {
-        ok: false,
-        mensaje: error.response?.data?.error || "Error al iniciar sesión",
-      };
-    }
-  };
 
-  const logout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+      // 🚀 DESPUÉS DEL LOGIN, IR AL DASHBOARD
+      navigate("/dashboard");
+
+      return true;
+    } catch (error) {
+      console.error("LOGIN ERROR:", error.response?.data || error);
+      return false;
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
     setUsuario(null);
-  };
+    navigate("/");
+  }
+
+  useEffect(() => {
+    const saved = localStorage.getItem("usuario");
+    if (saved) setUsuario(JSON.parse(saved));
+    setLoading(false);
+  }, []);
 
   return (
-    <AuthContext.Provider
-      value={{
-        usuario,
-        cargando,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ usuario, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }

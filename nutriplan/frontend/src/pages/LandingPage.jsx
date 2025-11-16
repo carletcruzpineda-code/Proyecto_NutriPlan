@@ -1,0 +1,19 @@
+// src/pages/LandingPage.jsx
+import HeaderLanding from "../components/landing/HeaderLanding";
+import Hero from "../components/landing/Hero";
+import Beneficios from "../components/landing/Beneficios";
+import SeccionCTA from "../components/landing/SeccionCTA";
+import FooterLanding from "../components/landing/FooterLanding";
+import "../styles/landing.css";
+
+export default function LandingPage() {
+  return (
+    <div className="landing-page">
+      <HeaderLanding />
+      <Hero />
+      <Beneficios />
+      <SeccionCTA />
+      <FooterLanding />
+    </div>
+  );
+}

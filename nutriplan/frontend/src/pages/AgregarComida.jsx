@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "../styles/agregar.css";
-import FoodSearch from "../components/FoodSearch";
-import FoodList from "../components/FoodList";
-import FoodForm from "../components/FoodForm";
+import FoodSearch from "../components/alimentos/FoodSearch";
+import FoodList from "../components/alimentos/FoodList";
+import FoodForm from "../components/alimentos/FoodForm";
 
 export default function AgregarComida() {
   const [selectedFood, setSelectedFood] = useState(null);

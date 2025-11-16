@@ -1,36 +1,48 @@
-// src/routes/routes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/Login.jsx";
-import Register from "../pages/Register.jsx";
-import Dashboard from "../pages/Dashboard.jsx";
-import PrivateRoute from "./PrivateRoute.jsx";
-import MainLayout from "../components/MainLayout.jsx";
-import InfoNutricional from "../pages/InfoNutricional.jsx";
-
+import LandingPage from "../pages/LandingPage";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
+import PrivateRoute from "./PrivateRoute";
+import InfoNutricional from "../pages/InfoNutricional";
+import AgregarComida from "../pages/AgregarComida";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Públicas */}
+
+      {/* Página pública */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Protegida (dashboard) */}
+      {/* Dashboard protegido */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <PrivateRoute>
-            <MainLayout>
-              <Dashboard />
-            </MainLayout>
+            <Dashboard />
           </PrivateRoute>
         }
       />
 
-      {/* Cualquier otra ruta */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Comidas */}
+      <Route
+        path="/agregar"
+        element={
+          <PrivateRoute>
+            <AgregarComida />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Info Nutricional */}
       <Route path="/info" element={<InfoNutricional />} />
 
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

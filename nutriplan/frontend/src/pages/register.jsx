@@ -3,6 +3,8 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/http.js";
 import { AuthContext } from "../context/AuthContext.jsx";
+import "../styles/auth.css";
+
 
 export default function Register() {
   const navigate = useNavigate();

@@ -1,0 +1,82 @@
+###################################
+# PYTHON / DJANGO
+###################################
+
+# Entornos virtuales (aunque no uses, por si acaso)
+env/
+venv/
+ENV/
+.venv/
+
+# Archivos compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de base de datos SQLite (si existieran)
+*.sqlite3
+
+# Archivos temporales
+*.log
+*.pot
+*.pyc
+
+# Archivos generados por Django
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Cache
+*.cache
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django migrations (opcional, puedes incluirlo)
+# api/migrations/
+# */migrations/
+
+
+###################################
+# NODE / REACT (VITE)
+###################################
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build output
+dist/
+build/
+
+# Coverage
+coverage/
+*.lcov
+
+# Logs
+*.log
+
+###################################
+# VSCODE / IDE
+###################################
+
+# VSCode
+.vscode/
+
+# IntelliJ / PyCharm
+.idea/
+*.iml
+
+###################################
+# SISTEMA
+###################################
+
+# Windows / OS X
+Thumbs.db
+.DS_Store
+
+# Git
+*.orig
