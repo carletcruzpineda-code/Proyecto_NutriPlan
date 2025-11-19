@@ -29,7 +29,7 @@ export default function Login() {
   };
 
   const handleBack = () => {
-    navigate("/"); // luego podemos llevarlo a la landing
+    navigate("/"); // llevarlo a la landing
   };
 
   return (

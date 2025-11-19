@@ -36,7 +36,7 @@ export default function Register() {
     setError(null);
 
     try {
-      // Construir payload para el backend
+      // Construyo payload para el backend
       const payload = {
         usuario_tipo: "cliente",
         nombre: form.nombre,
@@ -209,7 +209,7 @@ export default function Register() {
               </select>
             </div>
 
-            {/* Condiciones médicas (texto libre por ahora) */}
+            {/* Condiciones médicas  */}
             <div className="mt-3">
               <label className="form-label">
                 Condiciones Médicas (opcional)
@@ -225,7 +225,7 @@ export default function Register() {
               />
             </div>
 
-            {/* Alergias (texto libre por ahora) */}
+            {/* Alergias  */}
             <div className="mt-3">
               <label className="form-label">
                 Alergias Alimentarias (opcional)
