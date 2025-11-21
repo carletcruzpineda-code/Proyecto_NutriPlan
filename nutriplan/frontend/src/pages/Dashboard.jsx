@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api/http";
 
-// Importar componentes
+
 import HeaderDashboard from "../components/dashboard/HeaderDashboard";
 import TarjetaTotales from "../components/dashboard/TarjetaTotales";
 import GraficoCalorias from "../components/dashboard/GraficoCalorias";

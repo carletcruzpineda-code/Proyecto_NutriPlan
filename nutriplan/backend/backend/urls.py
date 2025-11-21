@@ -23,6 +23,6 @@ def home(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home),              # 👈 esto hace que / funcione
+    path('', home),              
     path('api/', include('api.urls')),
 ]

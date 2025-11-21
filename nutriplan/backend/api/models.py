@@ -22,12 +22,12 @@ class UsuarioManager(BaseUserManager):
         return user
 
     def create_superuser(self, correo, password=None, **extra_fields):
-        # Obligatorias para un admin
+        
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
 
-        # Valores por defecto para campos obligatorios
+        
         extra_fields.setdefault("nombre", "Admin")
         extra_fields.setdefault("edad", 0)
         extra_fields.setdefault("altura", 0)
@@ -39,9 +39,7 @@ class UsuarioManager(BaseUserManager):
         return self.create_user(correo, password, **extra_fields)
 
 
-# ---------------------------
-# CUSTOM USER MODEL
-# ---------------------------
+
 class Usuario(AbstractBaseUser, PermissionsMixin):
     usuario_tipo = models.CharField(max_length=100)
     nombre = models.CharField(max_length=100)
@@ -55,22 +53,20 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     condicion_medica = models.TextField(blank=True, null=True)
     alergia = models.TextField(blank=True, null=True)
 
-    # Requeridos por Django
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 
     USERNAME_FIELD = "correo"
-    REQUIRED_FIELDS = ["nombre"]  # solo pedirá nombre
+    REQUIRED_FIELDS = ["nombre"]  
 
     def __str__(self):
         return self.nombre
 
 
-# ---------------------------
-# RESTO DE MODELOS
-# ---------------------------
+
 class IndicadorProgreso(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="indicadores_progreso")
     fecha = models.DateField()

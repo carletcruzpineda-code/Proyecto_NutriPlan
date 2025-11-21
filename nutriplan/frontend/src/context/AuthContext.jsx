@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
 
       setUsuario(res.data.usuario);
 
-      // 🚀 DESPUÉS DEL LOGIN, IR AL DASHBOARD
+      
       navigate("/dashboard");
 
       return true;

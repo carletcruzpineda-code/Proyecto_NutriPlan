@@ -55,7 +55,7 @@ export default function InfoNutricional() {
         Consejos y ejercicios para alcanzar tus objetivos
       </p>
 
-      {/* Tabs */}
+      {/* Tabls */}
       <div className="info-tabs">
         <button className="info-tab active">🍏 Consejos Nutricionales</button>
         <button className="info-tab">🏋️ Ejercicios Físicos</button>

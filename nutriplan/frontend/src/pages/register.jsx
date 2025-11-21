@@ -1,4 +1,4 @@
-// src/pages/Register.jsx
+
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/http.js";
@@ -36,7 +36,7 @@ export default function Register() {
     setError(null);
 
     try {
-      // Construyo payload para el backend
+      
       const payload = {
         usuario_tipo: "cliente",
         nombre: form.nombre,
@@ -53,7 +53,7 @@ export default function Register() {
 
       await api.post("usuarios/", payload);
 
-      // login automático después de crear usuario
+      
       const result = await login(form.correo, form.password);
       if (result.ok) {
         navigate("/");
@@ -88,7 +88,7 @@ export default function Register() {
         </div>
 
         <div className="auth-card mx-auto">
-          {/* Tabs */}
+          {/* Tabls */}
           <div className="auth-tabs">
             <button
               className="auth-tab"

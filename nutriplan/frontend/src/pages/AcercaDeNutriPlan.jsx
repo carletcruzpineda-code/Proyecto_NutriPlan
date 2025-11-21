@@ -1,4 +1,4 @@
-// src/pages/AcercaDeNutriPlan.jsx
+
 import "../styles/info.css";
 
 export default function AcercaDeNutriPlan() {

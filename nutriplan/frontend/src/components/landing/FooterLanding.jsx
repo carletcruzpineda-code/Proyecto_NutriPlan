@@ -1,4 +1,4 @@
-// src/components/landing/FooterLanding.jsx
+
 export default function FooterLanding() {
   return (
     <footer className="lp-footer">

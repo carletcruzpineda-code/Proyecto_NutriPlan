@@ -1,4 +1,4 @@
-// src/components/dashboard/TarjetaObjetivo.jsx
+
 export default function TarjetaObjetivo() {
   return (
     <div className="card-dash card-objetivo">

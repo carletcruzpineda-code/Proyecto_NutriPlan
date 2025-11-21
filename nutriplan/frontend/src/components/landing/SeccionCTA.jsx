@@ -1,4 +1,4 @@
-// src/components/landing/SeccionCTA.jsx
+
 import { Link } from "react-router-dom";
 
 export default function SeccionCTA() {

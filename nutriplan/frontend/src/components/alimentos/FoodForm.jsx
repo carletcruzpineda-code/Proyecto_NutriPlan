@@ -14,7 +14,7 @@ export default function FoodForm({ food, clearFood }) {
       const totalGrasas = (food.grasas * cantidad).toFixed(2);
 
       await axios.post("/registros/", {
-        usuario: 1, // luego reemplazo con user.id de AuthContext
+        usuario: 1, 
         alimento: food.id,
         cantidad_consumida: cantidad,
         fecha: new Date().toISOString().slice(0, 10),

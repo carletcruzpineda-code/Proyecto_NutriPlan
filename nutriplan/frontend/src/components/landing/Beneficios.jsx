@@ -1,4 +1,4 @@
-// src/components/landing/Beneficios.jsx
+
 export default function Beneficios() {
   return (
     <section className="lp-benefits-section">

@@ -1,4 +1,4 @@
-// src/pages/Login.jsx
+
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -25,11 +25,11 @@ export default function Login() {
       return;
     }
 
-    navigate("/"); // Dashboard
+    navigate("/"); 
   };
 
   const handleBack = () => {
-    navigate("/"); // llevarlo a la landing
+    navigate("/"); 
   };
 
   return (
@@ -45,7 +45,7 @@ export default function Login() {
         </div>
 
         <div className="auth-card mx-auto">
-          {/* Tabs */}
+          {/* Tabls */}
           <div className="auth-tabs">
             <button className="auth-tab active" type="button">
               Iniciar Sesión
