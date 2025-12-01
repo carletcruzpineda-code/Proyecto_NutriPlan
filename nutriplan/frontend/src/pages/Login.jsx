@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
 import "../styles/auth.css";
 
 export default function Login() {
@@ -25,11 +25,12 @@ export default function Login() {
       return;
     }
 
-    navigate("/"); // Dashboard
+    setCargando(false);
+    navigate("/dashboard"); // 👈 ir al dashboard
   };
 
   const handleBack = () => {
-    navigate("/"); // luego podemos llevarlo a la landing
+    navigate("/"); // llevarlo a la landing
   };
 
   return (

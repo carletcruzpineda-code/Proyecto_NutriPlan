@@ -1,5 +1,6 @@
+// src/components/dashboard/HeaderDashboard.jsx
 import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function HeaderDashboard() {
   const { user } = useContext(AuthContext);

@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext.jsx";
 
 export default function PrivateRoute({ children }) {
-  const { usuario, cargando } = useContext(AuthContext);
+  const { user, cargando } = useContext(AuthContext);
 
   if (cargando) {
     return (
@@ -14,7 +14,7 @@ export default function PrivateRoute({ children }) {
     );
   }
 
-  if (!usuario) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 

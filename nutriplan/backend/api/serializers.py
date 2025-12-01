@@ -4,6 +4,28 @@ from .models import (
     Alimento, RegistroConsumo, PlanNutricional, PlanAlimento
 )
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class LoginSerializer(TokenObtainPairSerializer):
+    username_field = "correo"
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["nombre"] = user.nombre
+        token["correo"] = user.correo
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data["usuario"] = {
+            "id": self.user.id,
+            "nombre": self.user.nombre,
+            "correo": self.user.correo,
+        }
+        return data
+
+
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 

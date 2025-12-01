@@ -1,30 +1,51 @@
-import React, { useEffect, useState } from "react";
-import axios from "../../api/http";
+// src/components/alimentos/FoodList.jsx
+import { useEffect, useState } from "react";
+import http from "../../api/http";
 
-export default function FoodList() {
-  const [lista, setLista] = useState([]);
+export default function FoodList({ reloadTrigger }) {
+  const [registros, setRegistros] = useState([]);
+  const [cargando, setCargando] = useState(false);
 
-  const cargar = async () => {
+  const cargarRegistros = async () => {
     try {
-      const res = await axios.get("/registros/");
-      setLista(res.data);
+      setCargando(true);
+      const resp = await http.get("registros/");
+      setRegistros(resp.data);
     } catch (error) {
-      console.error("Error cargando registros", error);
+      console.error("Error cargando registros de consumo", error);
+    } finally {
+      setCargando(false);
     }
   };
 
   useEffect(() => {
-    cargar();
-  }, []);
+    cargarRegistros();
+  }, [reloadTrigger]);
 
   return (
-    <div className="food-list">
-      <h3>Registros de hoy</h3>
-      <ul>
-        {lista.map((item) => (
-          <li key={item.id}>{item.alimento} — {item.total_calorias} kcal</li>
+    <div className="food-list mt-3">
+      {cargando && <p className="text-muted">Cargando registros...</p>}
+
+      {!cargando && registros.length === 0 && (
+        <p className="text-muted mb-0">Aún no has registrado comidas hoy.</p>
+      )}
+
+      {!cargando &&
+        registros.map((reg) => (
+          <div key={reg.id} className="food-list-item">
+            <div>
+              <strong>{reg.alimento}</strong>
+              <div className="text-muted" style={{ fontSize: 13 }}>
+                {reg.cantidad_consumida} g · {reg.fecha}
+              </div>
+            </div>
+
+            <div className="text-end">
+              <div className="food-list-cal">{reg.total_calorias} cal</div>
+            </div>
+          </div>
         ))}
-      </ul>
     </div>
   );
 }
+  

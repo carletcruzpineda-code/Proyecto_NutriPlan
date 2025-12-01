@@ -1,12 +1,13 @@
+// src/pages/Dashboard.jsx
 import { useState, useEffect } from "react";
-import api from "../api/http";
+import http from "../api/http.js";
 
-// Importar componentes
-import HeaderDashboard from "../components/dashboard/HeaderDashboard";
-import TarjetaTotales from "../components/dashboard/TarjetaTotales";
-import GraficoCalorias from "../components/dashboard/GraficoCalorias";
-import GraficoMacros from "../components/dashboard/GraficoMacros";
-import ListaComidas from "../components/dashboard/ListaComidas";
+// Componentes del dashboard
+import HeaderDashboard from "../components/dashboard/HeaderDashboard.jsx";
+import TarjetaTotales from "../components/dashboard/TarjetaTotales.jsx";
+import GraficoCalorias from "../components/dashboard/GraficoCalorias.jsx";
+import GraficoMacros from "../components/dashboard/GraficoMacros.jsx";
+import ListaComidas from "../components/dashboard/ListaComidas.jsx";
 
 import "../styles/dashboard.css";
 
@@ -19,34 +20,29 @@ export default function Dashboard() {
 
   const cargarIndicadores = async () => {
     try {
-      const resp = await api.get("indicadores/");
-      setIndicadores(resp.data);
+      const resp = await http.get("indicadores/");
+      // si tu API devuelve lista, tomamos el primero
+      const data = Array.isArray(resp.data) ? resp.data[0] : resp.data;
+      setIndicadores(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error cargando indicadores:", error);
     }
   };
 
   return (
-    <div className="dashboard">
+    <div className="dash-container">
       <HeaderDashboard />
 
-      {/* BOTONES PRINCIPALES */}
-      <div className="dash-buttons">
-        <a href="/info" className="btn btn-outline-success">
-          📘 Información Nutricional
-        </a>
-
-        <a href="/agregar-comida" className="btn btn-success">
-          ➕ Agregar Comida
-        </a>
-      </div>
-
-      {/* GRID PRINCIPAL */}
       <div className="dash-grid">
-        <TarjetaTotales data={indicadores} />
-        <GraficoMacros />
-        <GraficoCalorias />
-        <ListaComidas />
+        <div className="dash-main">
+          <TarjetaTotales data={indicadores} />
+          <GraficoCalorias data={indicadores} />
+          <GraficoMacros data={indicadores} />
+        </div>
+
+        <div className="dash-side">
+          <ListaComidas />
+        </div>
       </div>
     </div>
   );

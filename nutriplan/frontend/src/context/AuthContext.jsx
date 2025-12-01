@@ -1,53 +1,71 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import http from "../api/http";
-import { useNavigate } from "react-router-dom";
+// src/context/AuthContext.jsx
+import { createContext, useState, useEffect } from "react";
+import http from "../api/http.js";
 
 export const AuthContext = createContext();
 
+// 👉 Aquí exportamos AMBOS: default y named
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
-  async function login(correo, password) {
-    try {
-      const res = await http.post("auth/login/", { correo, password });
-
-      localStorage.setItem("access", res.data.access);
-      localStorage.setItem("refresh", res.data.refresh);
-      localStorage.setItem("usuario", JSON.stringify(res.data.usuario));
-
-      setUsuario(res.data.usuario);
-
-      // 🚀 DESPUÉS DEL LOGIN, IR AL DASHBOARD
-      navigate("/dashboard");
-
-      return true;
-    } catch (error) {
-      console.error("LOGIN ERROR:", error.response?.data || error);
-      return false;
-    }
-  }
-
-  function logout() {
-    localStorage.clear();
-    setUsuario(null);
-    navigate("/");
-  }
-
+  // Cargar usuario si existe token
   useEffect(() => {
-    const saved = localStorage.getItem("usuario");
-    if (saved) setUsuario(JSON.parse(saved));
-    setLoading(false);
+    const cargarUsuario = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setCargando(false);
+        return;
+      }
+
+      try {
+        const res = await http.get("auth/me/");
+        setUser(res.data);
+      } catch (error) {
+        console.error("No se pudo cargar el usuario:", error);
+        localStorage.removeItem("token");
+        setUser(null);
+      }
+
+      setCargando(false);
+    };
+
+    cargarUsuario();
   }, []);
 
+  // LOGIN
+  const login = async (correo, password) => {
+    try {
+      const response = await http.post("auth/login/", {
+        correo,
+        password,
+      });
+
+      if (!response.data.access) {
+        return { ok: false, mensaje: "Respuesta inválida" };
+      }
+
+      localStorage.setItem("token", response.data.access);
+      setUser(response.data.usuario);
+
+      return { ok: true };
+    } catch (error) {
+      console.error("Error en login:", error);
+      return { ok: false, mensaje: "Correo o contraseña incorrectos" };
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ usuario, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, cargando }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+// 👇 Export por defecto (para compatibilidad)
+export default AuthProvider;
