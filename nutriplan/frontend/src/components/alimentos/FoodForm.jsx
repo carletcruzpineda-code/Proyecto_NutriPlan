@@ -1,7 +1,7 @@
-// src/components/alimentos/FoodForm.jsx
-import { useContext, useState } from "react";
+// src/components/dashboard/FoodForm.jsx
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import http from "../../api/http";
-import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function FoodForm({ food, clearFood, onSaved }) {
   const { user } = useContext(AuthContext);
@@ -9,45 +9,38 @@ export default function FoodForm({ food, clearFood, onSaved }) {
   const [guardando, setGuardando] = useState(false);
 
   const handleGuardar = async () => {
-    if (!cantidad) {
-      alert("Ingresa una cantidad en gramos.");
-      return;
+    if (!cantidad || Number(cantidad) <= 0) {
+      return alert("Ingresa una cantidad válida en gramos.");
     }
 
-    if (!user) {
-      alert("Debes iniciar sesión para registrar comidas.");
-      return;
-    }
+    setGuardando(true);
+
+    // Conversión correcta (tu DB usa valores x 100g)
+    const gramos = Number(cantidad);
+
+    const total_calorias = (food.calorias * gramos) / 100;
+    const total_proteinas = (food.proteina * gramos) / 100;
+    const total_carbohidratos = (food.carbohidratos * gramos) / 100;
+    const total_grasas = (food.grasas * gramos) / 100;
 
     try {
-      setGuardando(true);
-      const cantidadNum = Number(cantidad);
-
-      // Asumo que tus macros están definidos por gramo
-      const totalCalorias = Number(food.calorias) * cantidadNum;
-      const totalProteinas = Number(food.proteina) * cantidadNum;
-      const totalCarbohidratos = Number(food.carbohidratos) * cantidadNum;
-      const totalGrasas = Number(food.grasas) * cantidadNum;
-
-      await axios.post("/registros/", {
-        usuario: 1, 
+      await http.post("registros/", {
         alimento: food.id,
-        cantidad_consumida: cantidadNum,
+        cantidad_consumida: gramos,
         fecha: new Date().toISOString().slice(0, 10),
-        peso_actual: 0, // por ahora 0; luego puedes conectarlo con el peso real
-        total_calorias: totalCalorias.toFixed(2),
-        total_proteinas: totalProteinas.toFixed(2),
-        total_carbohidratos: totalCarbohidratos.toFixed(2),
-        total_grasas: totalGrasas.toFixed(2),
+
+        // nuevos cálculos corregidos
+        total_calorias,
+        total_proteinas,
+        total_carbohidratos,
+        total_grasas,
       });
 
-      alert("Comida registrada correctamente.");
-      setCantidad("");
+      onSaved?.();
       clearFood();
-      onSaved && onSaved(); // avisar para recargar la lista
     } catch (error) {
-      console.error("Error al registrar consumo", error);
-      alert("No se pudo registrar el consumo.");
+      console.error("❌ Error al guardar registro:", error);
+      alert("Error al guardar.");
     } finally {
       setGuardando(false);
     }
@@ -56,45 +49,23 @@ export default function FoodForm({ food, clearFood, onSaved }) {
   if (!food) return null;
 
   return (
-    <div className="food-form">
-      <h5 className="mb-2">Alimento seleccionado</h5>
-      <div className="food-form-header">
-        <div>
-          <strong>{food.nombre}</strong>
-          <div className="text-muted" style={{ fontSize: 13 }}>
-            {food.calorias} cal · {food.proteina} prot · {food.carbohidratos} carb ·{" "}
-            {food.grasas} grasa (por gramo)
-          </div>
-        </div>
+    <div>
+      <h4>{food.nombre}</h4>
 
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-secondary"
-          onClick={clearFood}
-        >
-          Cambiar alimento
-        </button>
-      </div>
-
-      <div className="mt-3">
-        <label className="form-label">Cantidad (gramos)</label>
-        <input
-          type="number"
-          min="1"
-          className="form-control"
-          value={cantidad}
-          onChange={(e) => setCantidad(e.target.value)}
-          placeholder="Ej: 150"
-        />
-      </div>
+      <input
+        type="number"
+        className="form-control"
+        placeholder="Cantidad (g)"
+        value={cantidad}
+        onChange={(e) => setCantidad(e.target.value)}
+      />
 
       <button
-        type="button"
-        className="btn btn-success w-100 mt-3"
-        onClick={handleGuardar}
+        className="btn btn-success w-100 mt-2"
         disabled={guardando}
+        onClick={handleGuardar}
       >
-        {guardando ? "Guardando..." : "Guardar consumo"}
+        Guardar
       </button>
     </div>
   );

@@ -1,0 +1,38 @@
+.lista-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.comida-item {
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background: #f6fffa;
+  border: 1px solid #e6f4ee;
+}
+
+.macro-line {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.btn-agregar-comida {
+  display: block;
+  margin-top: 15px;
+  width: 100%;
+  background: #00a872;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-agregar-comida:hover {
+  background: #008f63;
+}

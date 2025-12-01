@@ -1,118 +1,58 @@
-from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated, AllowAny
+# backend/api/views.py
 
+from rest_framework import generics, permissions
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .models import (
-    Usuario, IndicadorProgreso, Articulo,
-    Alimento, RegistroConsumo, PlanNutricional, PlanAlimento
-)
+from .models import Usuario, Alimento, RegistroConsumo, IndicadorProgreso
 from .serializers import (
-    UsuarioSerializer, IndicadorProgresoSerializer, ArticuloSerializer,
-    AlimentoSerializer, RegistroConsumoSerializer, PlanNutricionalSerializer, PlanAlimentoSerializer
+    UsuarioSerializer,
+    AlimentoSerializer,
+    RegistroConsumoSerializer,
+    IndicadorProgresoSerializer,
 )
 
 
-# ---------------------------
-# 1. USUARIO
-# ---------------------------
-class UsuarioListCreateView(ListCreateAPIView):
+# -----------------------------------
+# USUARIOS
+# -----------------------------------
+class UsuarioListCreateView(generics.ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [AllowAny]   # registro público
-
-
-class UsuarioDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Usuario.objects.all()
-    serializer_class = UsuarioSerializer
-    permission_classes = [IsAuthenticated]
-
-
-# ---------------------------
-# 2. INDICADOR PROGRESO
-# ---------------------------
-class IndicadorProgresoListCreateView(ListCreateAPIView):
-    queryset = IndicadorProgreso.objects.all()
-    serializer_class = IndicadorProgresoSerializer
-    permission_classes = [IsAuthenticated]
-
-
-
-class IndicadorProgresoDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = IndicadorProgreso.objects.all()
-    serializer_class = IndicadorProgresoSerializer
-    permission_classes = [IsAuthenticated]
-
-
-
-# ---------------------------
-# 3. ARTÍCULO
-# ---------------------------
-class ArticuloListCreateView(ListCreateAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
     permission_classes = [AllowAny]
 
 
-class ArticuloDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
-    permission_classes = [AllowAny]
-
-
-# ---------------------------
-# 4. ALIMENTO
-# ---------------------------
-class AlimentoListCreateView(ListCreateAPIView):
+# -----------------------------------
+# ALIMENTOS
+# -----------------------------------
+class AlimentoListCreateView(generics.ListCreateAPIView):
     queryset = Alimento.objects.all()
     serializer_class = AlimentoSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
-class AlimentoDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Alimento.objects.all()
-    serializer_class = AlimentoSerializer
-    permission_classes = [AllowAny]
-
-
-# ---------------------------
-# 5. REGISTRO CONSUMO
-# ---------------------------
-class RegistroConsumoListCreateView(ListCreateAPIView):
+# -----------------------------------
+# REGISTROS DE CONSUMO
+# -----------------------------------
+class RegistroConsumoListCreateView(generics.ListCreateAPIView):
     queryset = RegistroConsumo.objects.all()
     serializer_class = RegistroConsumoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """
+        Asignar el usuario autenticado automáticamente.
+        Esta línea SOLUCIONA el error:
+        IntegrityError: usuario_id cannot be null
+        """
+        serializer.save(usuario=self.request.user)
 
 
-class RegistroConsumoDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = RegistroConsumo.objects.all()
-    serializer_class = RegistroConsumoSerializer
-    permission_classes = [IsAuthenticated]
-
-
-# ---------------------------
-# 6. PLAN NUTRICIONAL
-# ---------------------------
-class PlanNutricionalListCreateView(ListCreateAPIView):
-    queryset = PlanNutricional.objects.all()
-    serializer_class = PlanNutricionalSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class PlanNutricionalDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = PlanNutricional.objects.all()
-    serializer_class = PlanNutricionalSerializer
-    permission_classes = [IsAuthenticated]
-
-
-# ---------------------------
-# 7. PLAN ALIMENTO
-# ---------------------------
-class PlanAlimentoListCreateView(ListCreateAPIView):
-    queryset = PlanAlimento.objects.all()
-    serializer_class = PlanAlimentoSerializer
-
-
-class PlanAlimentoDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = PlanAlimento.objects.all()
-    serializer_class = PlanAlimentoSerializer
+# -----------------------------------
+# INDICADORES DE PROGRESO
+# -----------------------------------
+class IndicadorProgresoListView(generics.ListAPIView):
+    queryset = IndicadorProgreso.objects.all()
+    serializer_class = IndicadorProgresoSerializer
+    permission_classes = [permissions.IsAuthenticated]

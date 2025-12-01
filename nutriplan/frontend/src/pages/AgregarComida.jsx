@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+// src/pages/AgregarComida.jsx
+import { useState } from "react";
 import "../styles/agregar.css";
 import FoodSearch from "../components/alimentos/FoodSearch";
-import FoodList from "../components/alimentos/FoodList";
 import FoodForm from "../components/alimentos/FoodForm";
 
-export default function AgregarComida() {
+export default function AgregarComida({ onComidaAgregada }) {
   const [selectedFood, setSelectedFood] = useState(null);
 
   return (
@@ -14,10 +14,12 @@ export default function AgregarComida() {
       <FoodSearch onSelect={(food) => setSelectedFood(food)} />
 
       {selectedFood && (
-        <FoodForm food={selectedFood} clearFood={() => setSelectedFood(null)} />
+        <FoodForm
+          food={selectedFood}
+          clearFood={() => setSelectedFood(null)}
+          onSaved={onComidaAgregada}
+        />
       )}
-
-      <FoodList />
     </div>
   );
 }

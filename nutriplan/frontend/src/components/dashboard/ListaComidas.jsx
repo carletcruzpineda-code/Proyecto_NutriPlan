@@ -1,70 +1,49 @@
 // src/components/dashboard/ListaComidas.jsx
-import { useState } from "react";
-import FoodSearch from "../alimentos/FoodSearch";
-import FoodForm from "../alimentos/FoodForm";
-import FoodList from "../alimentos/FoodList";
+import { useEffect, useState } from "react";
+import http from "../../api/http";
+import "./listaComidas.css";
 
-export default function ListaComidas() {
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [selectedFood, setSelectedFood] = useState(null);
-  const [reloadToken, setReloadToken] = useState(0);
+export default function ListaComidas({ onAgregarComida }) {
+  const [comidas, setComidas] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
-  const cerrarModal = () => {
-    setSelectedFood(null);
-    setMostrarModal(false);
+  const cargarComidas = async () => {
+    try {
+      const res = await http.get("registros/");
+      setComidas(res.data);
+    } catch (err) {
+      console.error("Error cargando comidas:", err);
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const handleGuardado = () => {
-    // recargar lista
-    setReloadToken((prev) => prev + 1);
-  };
+  useEffect(() => {
+    cargarComidas();
+  }, []);
 
   return (
-    <>
-      <div className="dash-card text-center p-4">
-        <h5 className="dash-card-title">Comidas registradas</h5>
-        <p className="text-muted">Revisa lo que has consumido hoy</p>
+    <div className="lista-card">
+      <h3>Comidas registradas</h3>
 
-        <FoodList reloadTrigger={reloadToken} />
-
-        <button
-          className="btn btn-success mt-3"
-          type="button"
-          onClick={() => setMostrarModal(true)}
-        >
-          ➕ Agregar Comida
-        </button>
-      </div>
-
-      {mostrarModal && (
-        <div className="agregar-overlay">
-          <div className="agregar-modal">
-            <div className="agregar-modal-header">
-              <h5>Agregar consumo</h5>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-secondary"
-                onClick={cerrarModal}
-              >
-                ✕
-              </button>
+      {cargando ? (
+        <p>Cargando...</p>
+      ) : comidas.length === 0 ? (
+        <p>No hay comidas registradas.</p>
+      ) : (
+        comidas.map((c) => (
+          <div key={c.id} className="comida-item">
+            <strong>{c.alimento_detalle?.nombre}</strong>
+            <div className="macro-line">
+              {c.total_calorias} kcal — P: {c.total_proteinas}g — C: {c.total_carbohidratos}g — G: {c.total_grasas}g
             </div>
-
-            <FoodSearch onSelect={(food) => setSelectedFood(food)} />
-
-            {selectedFood && (
-              <FoodForm
-                food={selectedFood}
-                clearFood={() => setSelectedFood(null)}
-                onSaved={() => {
-                  handleGuardado();
-                  cerrarModal();
-                }}
-              />
-            )}
           </div>
-        </div>
+        ))
       )}
-    </>
+
+      <button className="btn-agregar-comida" onClick={onAgregarComida}>
+        + Agregar comida
+      </button>
+    </div>
   );
 }

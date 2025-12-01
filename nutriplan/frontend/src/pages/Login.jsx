@@ -1,7 +1,6 @@
-
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext.jsx";
 import "../styles/auth.css";
 
 export default function Login() {
@@ -17,20 +16,18 @@ export default function Login() {
     setCargando(true);
     setError(null);
 
-    const resultado = await login(correo, password);
+    const result = await login(correo, password);
 
-    if (!resultado.ok) {
-      setError(resultado.mensaje || "Correo o contraseña incorrectos");
+    if (!result.ok) {
+      setError(result.mensaje);
       setCargando(false);
       return;
     }
 
-    navigate("/"); 
+    navigate("/dashboard");
   };
 
-  const handleBack = () => {
-    navigate("/"); 
-  };
+  const handleBack = () => navigate("/");
 
   return (
     <div className="auth-wrapper">
@@ -45,7 +42,6 @@ export default function Login() {
         </div>
 
         <div className="auth-card mx-auto">
-          {/* Tabls */}
           <div className="auth-tabs">
             <button className="auth-tab active" type="button">
               Iniciar Sesión
@@ -60,39 +56,34 @@ export default function Login() {
           </div>
 
           <h5 className="mb-1">Iniciar Sesión</h5>
-          <p className="text-muted mb-3" style={{ fontSize: 14 }}>
-            Ingresa tus credenciales para acceder a tu cuenta
-          </p>
+          <p className="text-muted mb-3">Ingresa tus credenciales</p>
 
           {error && <div className="alert alert-danger py-2">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label className="form-label">Email</label>
+              <label>Email</label>
               <input
                 type="email"
                 className="form-control"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
                 required
-                placeholder="tu_correo@ejemplo.com"
               />
             </div>
 
             <div className="mb-4">
-              <label className="form-label">Contraseña</label>
+              <label>Contraseña</label>
               <input
                 type="password"
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="********"
               />
             </div>
 
             <button
-              type="submit"
               className="btn btn-success w-100 auth-submit"
               disabled={cargando}
             >
