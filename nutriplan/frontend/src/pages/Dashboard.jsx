@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react";
 import http from "../api/http.js";
 
-// Componentes del dashboard
-import HeaderDashboard from "../components/dashboard/HeaderDashboard.jsx";
-import TarjetaTotales from "../components/dashboard/TarjetaTotales.jsx";
-import GraficoCalorias from "../components/dashboard/GraficoCalorias.jsx";
-import GraficoMacros from "../components/dashboard/GraficoMacros.jsx";
-import ListaComidas from "../components/dashboard/ListaComidas.jsx";
+
+import HeaderDashboard from "../components/dashboard/HeaderDashboard";
+import TarjetaTotales from "../components/dashboard/TarjetaTotales";
+import GraficoCalorias from "../components/dashboard/GraficoCalorias";
+import GraficoMacros from "../components/dashboard/GraficoMacros";
+import ListaComidas from "../components/dashboard/ListaComidas";
 
 import "../styles/dashboard.css";
 

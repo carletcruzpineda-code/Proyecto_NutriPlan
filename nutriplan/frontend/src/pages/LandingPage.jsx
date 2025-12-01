@@ -1,4 +1,4 @@
-// src/pages/LandingPage.jsx
+
 import HeaderLanding from "../components/landing/HeaderLanding";
 import Hero from "../components/landing/Hero";
 import Beneficios from "../components/landing/Beneficios";

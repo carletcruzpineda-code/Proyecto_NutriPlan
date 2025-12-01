@@ -1,15 +1,13 @@
-// src/routes/routes.jsx
+
 import { Routes, Route, Navigate } from "react-router-dom";
-
-import LandingPage from "../pages/LandingPage.jsx";
-import Login from "../pages/Login.jsx";
-import Register from "../pages/Register.jsx";
-import Dashboard from "../pages/Dashboard.jsx";
-import InfoNutricional from "../pages/InfoNutricional.jsx";
-import AgregarComida from "../pages/AgregarComida.jsx";
-import AcercaDeNutriPlan from "../pages/AcercaDeNutriPlan.jsx";
-
-import PrivateRoute from "./PrivateRoute.jsx";
+import LandingPage from "../pages/LandingPage";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
+import PrivateRoute from "./PrivateRoute";
+import InfoNutricional from "../pages/InfoNutricional";
+import AgregarComida from "../pages/AgregarComida";
+import AcercaDeNutriPlan from "../pages/AcercaDeNutriPlan";
 
 export default function AppRoutes() {
   return (
@@ -17,7 +15,7 @@ export default function AppRoutes() {
       {/* Página pública */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* Acerca de NutriPlan */}
+      {/* Nueva página: Acerca de NutriPlan */}
       <Route path="/acerca" element={<AcercaDeNutriPlan />} />
 
       {/* Auth */}

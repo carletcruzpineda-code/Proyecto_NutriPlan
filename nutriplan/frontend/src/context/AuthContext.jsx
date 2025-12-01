@@ -36,17 +36,16 @@ export function AuthProvider({ children }) {
   // LOGIN
   const login = async (correo, password) => {
     try {
-      const response = await http.post("auth/login/", {
-        correo,
-        password,
-      });
+      const res = await http.post("auth/login/", { correo, password });
 
-      if (!response.data.access) {
-        return { ok: false, mensaje: "Respuesta inválida" };
-      }
+      localStorage.setItem("access", res.data.access);
+      localStorage.setItem("refresh", res.data.refresh);
+      localStorage.setItem("usuario", JSON.stringify(res.data.usuario));
 
-      localStorage.setItem("token", response.data.access);
-      setUser(response.data.usuario);
+      setUsuario(res.data.usuario);
+
+      
+      navigate("/dashboard");
 
       return { ok: true };
     } catch (error) {

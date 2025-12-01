@@ -29,8 +29,8 @@ export default function FoodForm({ food, clearFood, onSaved }) {
       const totalCarbohidratos = Number(food.carbohidratos) * cantidadNum;
       const totalGrasas = Number(food.grasas) * cantidadNum;
 
-      await http.post("registros/", {
-        usuario: user.id,
+      await axios.post("/registros/", {
+        usuario: 1, 
         alimento: food.id,
         cantidad_consumida: cantidadNum,
         fecha: new Date().toISOString().slice(0, 10),

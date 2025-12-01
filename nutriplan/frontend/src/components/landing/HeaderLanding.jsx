@@ -1,4 +1,4 @@
-// src/components/landing/HeaderLanding.jsx
+
 import { Link } from "react-router-dom";
 
 export default function HeaderLanding() {
@@ -8,7 +8,7 @@ export default function HeaderLanding() {
         <div className="lp-logo">NutriPlan</div>
 
         <nav className="lp-nav">
-          {/* Enlace nuevo */}
+          {/* Enlace new */}
           <Link to="/acerca" className="lp-header-link">
             Acerca de NutriPlan
           </Link>

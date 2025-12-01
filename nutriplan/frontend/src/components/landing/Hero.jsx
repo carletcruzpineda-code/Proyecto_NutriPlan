@@ -1,5 +1,4 @@
-// src/components/landing/Hero.jsx
-// Si tienes una imagen en /public, déjala como "/hero-plate.png"
+
 export default function Hero() {
   return (
     <section className="lp-hero">
