@@ -2,8 +2,6 @@
 
 from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework import status
 
 from .models import Usuario, Alimento, RegistroConsumo, IndicadorProgreso
 from .serializers import (
@@ -33,7 +31,7 @@ class AlimentoListCreateView(generics.ListCreateAPIView):
 
 
 # -----------------------------------
-# REGISTROS DE CONSUMO
+# REGISTROS DE CONSUMO (LISTAR / CREAR)
 # -----------------------------------
 class RegistroConsumoListCreateView(generics.ListCreateAPIView):
     queryset = RegistroConsumo.objects.all()
@@ -43,10 +41,17 @@ class RegistroConsumoListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         """
         Asignar el usuario autenticado automáticamente.
-        Esta línea SOLUCIONA el error:
-        IntegrityError: usuario_id cannot be null
         """
         serializer.save(usuario=self.request.user)
+
+
+# -----------------------------------
+# REGISTRO DE CONSUMO (DETALLE: VER / EDITAR / ELIMINAR)
+# -----------------------------------
+class RegistroConsumoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = RegistroConsumo.objects.all()
+    serializer_class = RegistroConsumoSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # -----------------------------------

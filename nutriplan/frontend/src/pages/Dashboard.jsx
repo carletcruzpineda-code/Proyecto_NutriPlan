@@ -14,6 +14,7 @@ import "../styles/dashboard.css";
 export default function Dashboard() {
   const [indicadores, setIndicadores] = useState(null);
   const [mostrarAgregar, setMostrarAgregar] = useState(false);
+  const [reloadRegistros, setReloadRegistros] = useState(0);
 
   useEffect(() => {
     cargarIndicadores();
@@ -30,9 +31,14 @@ export default function Dashboard() {
   };
 
   const abrirFormulario = () => setMostrarAgregar(true);
-  const cerrarFormulario = () => {
+
+  const handleComidaAgregada = () => {
     setMostrarAgregar(false);
+    setReloadRegistros((prev) => prev + 1);
+    cargarIndicadores();
   };
+
+  const cerrarFormulario = () => setMostrarAgregar(false);
 
   return (
     <div className="dash-container">
@@ -48,13 +54,14 @@ export default function Dashboard() {
 
         {/* LADO DERECHO */}
         <div className="dash-side">
-          <ListaComidas onAgregarComida={abrirFormulario} />
+          <ListaComidas
+            onAgregarComida={abrirFormulario}
+            reloadTrigger={reloadRegistros}
+          />
         </div>
       </div>
 
-      {/* ================================
-            MODAL PARA AGREGAR COMIDA
-      ================================== */}
+      {/* MODAL PARA AGREGAR COMIDA */}
       {mostrarAgregar && (
         <div className="modal-overlay">
           <div className="modal-contenido">
@@ -62,7 +69,7 @@ export default function Dashboard() {
               X
             </button>
 
-            <AgregarComida onComidaAgregada={cerrarFormulario} />
+            <AgregarComida onComidaAgregada={handleComidaAgregada} />
           </div>
         </div>
       )}

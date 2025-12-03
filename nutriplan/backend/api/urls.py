@@ -11,5 +11,6 @@ urlpatterns = [
     path("usuarios/", views.UsuarioListCreateView.as_view()),
     path("alimentos/", views.AlimentoListCreateView.as_view()),
     path("registros/", views.RegistroConsumoListCreateView.as_view()),
+    path("registros/<int:pk>/", views.RegistroConsumoDetailView.as_view()),  # <- NUEVO
     path("indicadores/", views.IndicadorProgresoListView.as_view()),
 ]

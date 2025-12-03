@@ -1,38 +1,45 @@
-.lista-card {
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-}
-
 .comida-item {
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  background: #f6fffa;
-  border: 1px solid #e6f4ee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-.macro-line {
-  font-size: 13px;
-  color: #666;
-  margin-top: 4px;
+.macro-cantidad {
+  font-size: 12px;
+  color: #888;
 }
 
-.btn-agregar-comida {
-  display: block;
-  margin-top: 15px;
-  width: 100%;
-  background: #00a872;
-  color: white;
+.comida-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-comida {
   border: none;
-  padding: 10px;
   border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  width: 90px;
 }
 
-.btn-agregar-comida:hover {
-  background: #008f63;
+.btn-comida-edit {
+  background: #e6f4ee;
+  color: #007a5b;
+}
+
+.btn-comida-edit:hover {
+  background: #d3ecdf;
+}
+
+.btn-comida-delete {
+  background: #ffe5e5;
+  color: #c0392b;
+}
+
+.btn-comida-delete:hover {
+  background: #ffd1d1;
 }
