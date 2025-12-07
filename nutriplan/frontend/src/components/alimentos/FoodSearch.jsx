@@ -1,46 +1,65 @@
+// src/components/alimentos/FoodSearch.jsx
+
 import { useEffect, useState } from "react";
 import http from "../../api/http";
 
 export default function FoodSearch({ onSelect }) {
-  const [term, setTerm] = useState("");
-  const [foods, setFoods] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [alimentos, setAlimentos] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Cargar alimentos una sola vez
   useEffect(() => {
-    http.get("alimentos/").then((res) => {
-      setFoods(res.data);
-      setFiltered(res.data);
-    });
+    const cargar = async () => {
+      try {
+        setLoading(true);
+        const res = await http.get("alimentos/");
+        setAlimentos(res.data || []);
+      } catch (error) {
+        console.error("Error cargando alimentos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargar();
   }, []);
 
-  useEffect(() => {
-    if (!term) {
-      setFiltered(foods);
-      return;
-    }
-    setFiltered(
-      foods.filter((f) => f.nombre.toLowerCase().includes(term.toLowerCase()))
+  // Filtrar en frontend, pero protegido
+  const resultados = alimentos.filter((a) => {
+    const termino = busqueda.toLowerCase();
+    return (
+      a.nombre?.toLowerCase().includes(termino) ||
+      a.categoria?.toLowerCase().includes(termino)
     );
-  }, [term, foods]);
+  });
 
   return (
-    <div>
+    <div className="food-search">
       <input
-        className="form-control mb-2"
+        type="text"
         placeholder="Buscar alimento..."
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
       />
-      {filtered.map((f) => (
-        <button
-          key={f.id}
-          type="button"
-          className="food-search-item"
-          onClick={() => onSelect(f)}
-        >
-          {f.nombre}
-        </button>
-      ))}
+
+      {loading && <p>Cargando alimentos...</p>}
+
+      {busqueda && resultados.length === 0 && !loading && (
+        <p>No se encontraron alimentos.</p>
+      )}
+
+      <ul className="search-results">
+        {resultados.map((food) => (
+          <li
+            key={food.id}
+            onClick={() => onSelect(food)}
+            className="search-item"
+          >
+            {food.nombre} — {food.calorias} kcal
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

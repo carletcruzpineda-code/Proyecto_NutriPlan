@@ -1,119 +1,135 @@
-// src/components/dashboard/ListaComidas.jsx
 import { useEffect, useState } from "react";
 import http from "../../api/http";
 import "./listaComidas.css";
 
-export default function ListaComidas({ onAgregarComida, reloadTrigger }) {
+export default function ListaComidas() {
   const [comidas, setComidas] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [editId, setEditId] = useState(null);
+  const [editCantidad, setEditCantidad] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // ===============================
+  // CARGAR REGISTROS DEL BACKEND
+  // ===============================
   const cargarComidas = async () => {
     try {
-      setCargando(true);
       const res = await http.get("registros/");
       setComidas(res.data);
-    } catch (err) {
-      console.error("Error cargando comidas:", err);
-    } finally {
-      setCargando(false);
+    } catch (error) {
+      console.error("Error cargando registros:", error);
     }
   };
 
   useEffect(() => {
     cargarComidas();
-  }, [reloadTrigger]);
+  }, []);
 
-  const handleEliminar = async (id) => {
-    const confirmar = window.confirm(
-      "¿Seguro que deseas eliminar este registro de comida?"
-    );
-    if (!confirmar) return;
+  // ===============================
+  // HABILITAR MODO EDICIÓN
+  // ===============================
+  const iniciarEdicion = (item) => {
+    setEditId(item.id);
+    setEditCantidad(item.cantidad_consumida);
+  };
+
+  // ===============================
+  // GUARDAR EDICIÓN (PATCH)
+  // ===============================
+  const guardarEdicion = async (id) => {
+    if (!editCantidad || isNaN(editCantidad) || Number(editCantidad) <= 0) {
+      alert("Ingrese una cantidad válida.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await http.patch(`registros/${id}/`, {
+        cantidad_consumida: Number(editCantidad),
+      });
+
+      // Recargar lista actualizada
+      await cargarComidas();
+
+      // Limpiar edición
+      setEditId(null);
+      setEditCantidad("");
+    } catch (error) {
+      console.error("Error editando registro:", error);
+      alert("No se pudo editar el registro.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===============================
+  // ELIMINAR REGISTRO
+  // ===============================
+  const eliminarComida = async (id) => {
+    if (!confirm("¿Eliminar este registro?")) return;
 
     try {
       await http.delete(`registros/${id}/`);
       setComidas((prev) => prev.filter((c) => c.id !== id));
-    } catch (err) {
-      console.error("Error al eliminar registro:", err);
-      alert("Ocurrió un error al eliminar el registro.");
-    }
-  };
-
-  const handleEditar = async (registro) => {
-    const actual = Number(registro.cantidad_consumida);
-    const input = window.prompt(
-      "Nueva cantidad en gramos:",
-      isNaN(actual) ? "" : String(actual)
-    );
-
-    if (input === null) {
-      // usuario canceló
-      return;
-    }
-
-    const gramos = Number(input);
-    if (!gramos || gramos <= 0) {
-      alert("Ingresa una cantidad válida en gramos.");
-      return;
-    }
-
-    try {
-      await http.patch(`registros/${registro.id}/`, {
-        cantidad_consumida: gramos,
-      });
-
-      // Recargar lista para obtener macros recalculados
-      await cargarComidas();
-    } catch (err) {
-      console.error("Error al editar registro:", err);
-      alert("Ocurrió un error al editar el registro.");
+    } catch (error) {
+      console.error("Error eliminando registro:", error);
+      alert("No se pudo eliminar el registro.");
     }
   };
 
   return (
-    <div className="lista-card">
-      <h3>Comidas registradas</h3>
+    <div className="lista-comidas-container">
+      <h3>Comidas Registradas</h3>
 
-      {cargando ? (
-        <p>Cargando...</p>
-      ) : comidas.length === 0 ? (
-        <p>No hay comidas registradas.</p>
-      ) : (
-        comidas.map((c) => (
-          <div key={c.id} className="comida-item">
-            <div>
-              <strong>{c.alimento_detalle?.nombre}</strong>
-              <div className="macro-line">
-                {c.total_calorias} kcal — P: {c.total_proteinas}g — C:{" "}
-                {c.total_carbohidratos}g — G: {c.total_grasas}g
-              </div>
-              <div className="macro-line macro-cantidad">
-                Cantidad: {c.cantidad_consumida} g
-              </div>
-            </div>
+      {comidas.length === 0 && <p>No hay registros aún.</p>}
 
-            <div className="comida-actions">
+      {comidas.map((item) => (
+        <div key={item.id} className="comida-card">
+          <div className="info">
+            <strong>{item.alimento_detalle?.nombre}</strong>
+            <p>Categoría: {item.alimento_detalle?.categoria}</p>
+            <p>Calorías: {item.total_calorias} kcal</p>
+            <p>
+              Carbs: {item.total_carbohidratos}g · Prot: {item.total_proteinas}g · Grasas:{" "}
+              {item.total_grasas}g
+            </p>
+          </div>
+
+          {/* ========== MODO EDICIÓN ========== */}
+          {editId === item.id ? (
+            <div className="acciones">
+              <input
+                type="number"
+                value={editCantidad}
+                onChange={(e) => setEditCantidad(e.target.value)}
+              />
+
               <button
-                type="button"
-                className="btn-comida btn-comida-edit"
-                onClick={() => handleEditar(c)}
+                className="guardar-btn"
+                disabled={loading}
+                onClick={() => guardarEdicion(item.id)}
               >
+                {loading ? "Guardando..." : "Guardar"}
+              </button>
+
+              <button className="cancelar-btn" onClick={() => setEditId(null)}>
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            // ========== ACCIONES NORMALES ==========
+            <div className="acciones">
+              <button className="editar-btn" onClick={() => iniciarEdicion(item)}>
                 Editar
               </button>
-              <button
-                type="button"
-                className="btn-comida btn-comida-delete"
-                onClick={() => handleEliminar(c.id)}
-              >
+
+              <button className="eliminar-btn" onClick={() => eliminarComida(item.id)}>
                 Eliminar
               </button>
             </div>
-          </div>
-        ))
-      )}
-
-      <button className="btn-agregar-comida" onClick={onAgregarComida}>
-        + Agregar comida
-      </button>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

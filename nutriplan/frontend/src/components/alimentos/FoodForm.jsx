@@ -1,71 +1,64 @@
-// src/components/dashboard/FoodForm.jsx
-import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState } from "react";
 import http from "../../api/http";
 
 export default function FoodForm({ food, clearFood, onSaved }) {
-  const { user } = useContext(AuthContext);
-  const [cantidad, setCantidad] = useState("");
-  const [guardando, setGuardando] = useState(false);
+  const [gramos, setGramos] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleGuardar = async () => {
-    if (!cantidad || Number(cantidad) <= 0) {
-      return alert("Ingresa una cantidad válida en gramos.");
+  const handleSave = async () => {
+    setError("");
+
+    // Validación
+    if (!gramos || isNaN(gramos) || Number(gramos) <= 0) {
+      setError("Ingrese una cantidad válida.");
+      return;
     }
 
-    setGuardando(true);
-
-    // Conversión correcta (tu DB usa valores x 100g)
-    const gramos = Number(cantidad);
-
-    const total_calorias = (food.calorias * gramos) / 100;
-    const total_proteinas = (food.proteina * gramos) / 100;
-    const total_carbohidratos = (food.carbohidratos * gramos) / 100;
-    const total_grasas = (food.grasas * gramos) / 100;
-
     try {
-      await http.post("registros/", {
+      setLoading(true);
+
+      // SOLO enviamos lo que el backend necesita
+      const payload = {
         alimento: food.id,
-        cantidad_consumida: gramos,
-        fecha: new Date().toISOString().slice(0, 10),
+        cantidad_consumida: Number(gramos)
+      };
 
-        // nuevos cálculos corregidos
-        total_calorias,
-        total_proteinas,
-        total_carbohidratos,
-        total_grasas,
-      });
+      const res = await http.post("registros/", payload);
 
-      onSaved?.();
+      if (onSaved) onSaved(res.data);
+
+      // Reset
+      setGramos("");
       clearFood();
-    } catch (error) {
-      console.error("❌ Error al guardar registro:", error);
-      alert("Error al guardar.");
+    } catch (err) {
+      console.error("Error guardando:", err);
+      setError("No se pudo guardar el registro.");
     } finally {
-      setGuardando(false);
+      setLoading(false);
     }
   };
 
-  if (!food) return null;
-
   return (
-    <div>
-      <h4>{food.nombre}</h4>
+    <div className="food-form">
+      <h3>Registrar consumo de {food.nombre}</h3>
 
+      <label>Cantidad en gramos:</label>
       <input
         type="number"
-        className="form-control"
-        placeholder="Cantidad (g)"
-        value={cantidad}
-        onChange={(e) => setCantidad(e.target.value)}
+        value={gramos}
+        onChange={(e) => setGramos(e.target.value)}
+        placeholder="Ejemplo: 100"
       />
 
-      <button
-        className="btn btn-success w-100 mt-2"
-        disabled={guardando}
-        onClick={handleGuardar}
-      >
-        Guardar
+      {error && <p className="error">{error}</p>}
+
+      <button onClick={handleSave} disabled={loading}>
+        {loading ? "Guardando..." : "Guardar consumo"}
+      </button>
+
+      <button className="cancel-btn" onClick={clearFood}>
+        Cancelar
       </button>
     </div>
   );

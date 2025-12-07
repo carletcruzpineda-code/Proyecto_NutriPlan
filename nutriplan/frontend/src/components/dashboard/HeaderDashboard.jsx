@@ -1,22 +1,29 @@
-// src/components/dashboard/HeaderDashboard.jsx
 import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext.jsx";
+import { AuthContext } from "../../context/AuthContext";
+import "../../styles/dashboard.css";
 
-export default function HeaderDashboard() {
-  const { user } = useContext(AuthContext);
+export default function HeaderDashboard({ nombre }) {
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    if (confirm("¿Deseas cerrar sesión?")) {
+      logout();
+      window.location.href = "/login";
+    }
+  };
 
   return (
-    <div className="dash-header">
-      <div>
-        <h2 className="dash-title">¡Hola, {user?.nombre}!</h2>
-        <p className="dash-subtitle">
-          Registra tus comidas y mantén un seguimiento de tu nutrición diaria
-        </p>
+    <header className="dashboard-header">
+      <div className="header-left">
+        <h1 className="dashboard-title">Bienvenido, {nombre}</h1>
+        <p className="dashboard-subtitle">Tu progreso, tu bienestar</p>
       </div>
 
-      <div className="dash-avatar">
-        {user?.nombre?.charAt(0).toUpperCase()}
+      <div className="header-right">
+        <button className="logout-btn" onClick={handleLogout}>
+          Cerrar Sesión
+        </button>
       </div>
-    </div>
+    </header>
   );
 }

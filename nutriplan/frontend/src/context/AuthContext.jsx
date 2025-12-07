@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import http from "../api/http";
 
 export const AuthContext = createContext();
@@ -7,8 +7,12 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [cargando, setCargando] = useState(true);
 
+  // ============================================================
+  // CARGAR USUARIO DESDE LOCALSTORAGE AL ABRIR LA APP
+  // ============================================================
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       setCargando(false);
       return;
@@ -16,40 +20,63 @@ export function AuthProvider({ children }) {
 
     http
       .get("auth/me/")
-      .then((res) => setUser(res.data))
+      .then((res) => {
+        setUser(res.data);
+      })
       .catch(() => {
         localStorage.removeItem("token");
         setUser(null);
       })
-      .finally(() => setCargando(false));
+      .finally(() => {
+        setCargando(false);
+      });
   }, []);
 
+  // ============================================================
+  // LOGIN (GUARDA TOKEN + DATOS DE USUARIO)
+  // ============================================================
   const login = async (correo, password) => {
     try {
-      const resp = await http.post("auth/login/", { correo, password });
-      localStorage.setItem("token", resp.data.access);
-      setUser(resp.data.usuario);
+      const res = await http.post("auth/login/", { correo, password });
+
+      const token = res.data.access;
+      const userData = res.data.usuario; // UsuarioSerializer → incluye todos los datos
+
+      // Guardar token en localStorage
+      localStorage.setItem("token", token);
+
+      // Guardar usuario en estado
+      setUser(userData);
+
       return { ok: true };
-    } catch (err) {
-      return {
-        ok: false,
-        mensaje: err.response?.data?.detail || "Credenciales incorrectas",
-      };
+    } catch (error) {
+      console.error("Error en login:", error);
+      return { ok: false, error: "Credenciales incorrectas" };
     }
   };
 
+  // ============================================================
+  // LOGOUT (BORRA TOKEN Y USUARIO)
+  // ============================================================
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
+  // ============================================================
+  // PROVIDER
+  // ============================================================
   return (
-    <AuthContext.Provider value={{ user, cargando, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        cargando,
+        login,
+        logout,
+        setUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

@@ -1,28 +1,43 @@
-export default function TarjetaTotales({ data }) {
+import "../../styles/dashboard.css";
+
+export default function TarjetaTotales({ registros }) {
+  // ===============================
+  // CALCULAR TOTALES DEL DÍA
+  // ===============================
+  const totales = registros.reduce(
+    (acc, item) => {
+      acc.calorias += Number(item.total_calorias || 0);
+      acc.carbohidratos += Number(item.total_carbohidratos || 0);
+      acc.proteinas += Number(item.total_proteinas || 0);
+      acc.grasas += Number(item.total_grasas || 0);
+      return acc;
+    },
+    { calorias: 0, carbohidratos: 0, proteinas: 0, grasas: 0 }
+  );
+
   return (
-    <div className="dash-card totals-card">
-      <h5 className="dash-card-title">Totales Nutricionales del Día</h5>
-      <p className="dash-card-sub">Balance nutricional equilibrado</p>
+    <div className="tarjeta tarjeta-totales">
+      <h3>Totales de Hoy</h3>
 
-      <div className="totals-grid">
+      <div className="totales-grid">
         <div className="total-item">
-          <h1 className="total-number text-cal">{data?.calorias || 0}</h1>
-          <p>Calorías</p>
+          <span className="label">Calorías</span>
+          <span className="value">{totales.calorias.toFixed(2)} kcal</span>
         </div>
 
         <div className="total-item">
-          <h1 className="total-number text-prot">{data?.proteinas || 0}</h1>
-          <p>Proteínas</p>
+          <span className="label">Carbohidratos</span>
+          <span className="value">{totales.carbohidratos.toFixed(2)} g</span>
         </div>
 
         <div className="total-item">
-          <h1 className="total-number text-carb">{data?.carbohidratos || 0}</h1>
-          <p>Carbohidratos</p>
+          <span className="label">Proteínas</span>
+          <span className="value">{totales.proteinas.toFixed(2)} g</span>
         </div>
 
         <div className="total-item">
-          <h1 className="total-number text-grasa">{data?.grasas || 0}</h1>
-          <p>Grasas</p>
+          <span className="label">Grasas</span>
+          <span className="value">{totales.grasas.toFixed(2)} g</span>
         </div>
       </div>
     </div>

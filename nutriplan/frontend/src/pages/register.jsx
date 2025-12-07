@@ -1,253 +1,227 @@
-
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/http.js";
-import { AuthContext } from "../context/AuthContext.jsx";
+import http from "../api/http";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 import "../styles/auth.css";
-
 
 export default function Register() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const [form, setForm] = useState({
+    usuario_tipo: "cliente",
     nombre: "",
-    edad: "",
     correo: "",
-    password: "",
-    peso: "",
+    edad: "",
     altura: "",
-    genero: "Masculino",
-    objetivo: "Mantener peso",
+    peso: "",
+    objetivo: "",
+    genero: "",
     condicion_medica: "",
     alergia: "",
+    password: "",
   });
 
+  const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState(null);
 
-  const updateField = (field, value) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
+  // ============================================
+  // MANEJAR CAMBIO DE INPUTS
+  // ============================================
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = async (e) => {
+  // ============================================
+  // REGISTRAR USUARIO → AUTO LOGIN → REDIRIGIR
+  // ============================================
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
     setCargando(true);
-    setError(null);
 
     try {
-      
-      const payload = {
-        usuario_tipo: "cliente",
-        nombre: form.nombre,
-        correo: form.correo,
-        edad: Number(form.edad) || 0,
-        altura: Number(form.altura) || 0,
-        peso: Number(form.peso) || 0,
-        objetivo: form.objetivo,
-        genero: form.genero,
-        condicion_medica: form.condicion_medica || null,
-        alergia: form.alergia || null,
-        password: form.password,
-      };
+      // 1️⃣ Registrar usuario en backend
+      await http.post("usuarios/", form);
 
-      await api.post("usuarios/", payload);
+      // 2️⃣ Auto Login
+      const loginResult = await login(form.correo, form.password);
 
-      
-      const result = await login(form.correo, form.password);
-      if (result.ok) {
-        navigate("/");
-      } else {
-        navigate("/login");
+      if (!loginResult.ok) {
+        setError("Registro correcto, pero no fue posible iniciar sesión.");
+        return;
       }
+
+      // 3️⃣ Redirigir al Dashboard
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.detail ||
-          "Error al crear la cuenta. Revisa los datos."
-      );
+
+      if (err.response?.data?.correo) {
+        setError("El correo ya está registrado.");
+      } else {
+        setError("No se pudo completar el registro.");
+      }
     } finally {
       setCargando(false);
     }
   };
 
-  const handleBack = () => {
-    navigate("/login");
-  };
-
   return (
     <div className="auth-wrapper">
-      <div style={{ maxWidth: 620, width: "100%" }}>
-        <button type="button" className="auth-back mb-3" onClick={handleBack}>
-          ← <span>Volver</span>
-        </button>
+      <div className="auth-card">
 
         <div className="auth-title">
-          <h1>NutriPlan</h1>
-          <p>Inicia tu viaje hacia una mejor nutrición</p>
+          <h1>Crear Cuenta</h1>
+          <p>Bienvenido a NutriPlan</p>
         </div>
 
-        <div className="auth-card mx-auto">
-          {/* Tabls */}
-          <div className="auth-tabs">
-            <button
-              className="auth-tab"
-              type="button"
-              onClick={() => navigate("/login")}
-            >
-              Iniciar Sesión
-            </button>
-            <button className="auth-tab active" type="button">
-              Registrarse
-            </button>
+        <button className="auth-back" onClick={() => navigate("/login")}>
+          ← Volver al inicio de sesión
+        </button>
+
+        {error && <p className="text-danger">{error}</p>}
+
+        {/* ============================================
+            FORMULARIO
+        ============================================ */}
+        <form onSubmit={handleRegister}>
+
+          <div className="mb-2">
+            <label>Nombre completo</label>
+            <input
+              type="text"
+              className="form-control"
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <h5 className="mb-1">Crear Cuenta</h5>
-          <p className="text-muted mb-3" style={{ fontSize: 14 }}>
-            Completa la información para personalizar tu experiencia
-          </p>
+          <div className="mb-2">
+            <label>Correo electrónico</label>
+            <input
+              type="email"
+              className="form-control"
+              name="correo"
+              value={form.correo}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+          <div className="mb-2">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <form onSubmit={handleSubmit}>
-            {/* Nombre / Edad */}
-            <div className="row g-3">
-              <div className="col-md-8">
-                <label className="form-label">Nombre</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={form.nombre}
-                  onChange={(e) => updateField("nombre", e.target.value)}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Edad</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={form.edad}
-                  onChange={(e) => updateField("edad", e.target.value)}
-                  required
-                  min="0"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="mt-3">
-              <label className="form-label">Email</label>
+          <div className="row">
+            <div className="col">
+              <label>Edad</label>
               <input
-                type="email"
+                type="number"
                 className="form-control"
-                value={form.correo}
-                onChange={(e) => updateField("correo", e.target.value)}
+                name="edad"
+                value={form.edad}
+                onChange={handleChange}
                 required
               />
             </div>
 
-            {/* Password */}
-            <div className="mt-3">
-              <label className="form-label">Contraseña</label>
+            <div className="col">
+              <label>Altura (cm)</label>
               <input
-                type="password"
+                type="number"
                 className="form-control"
-                value={form.password}
-                onChange={(e) => updateField("password", e.target.value)}
+                name="altura"
+                value={form.altura}
+                onChange={handleChange}
                 required
               />
             </div>
 
-            {/* Peso / Altura */}
-            <div className="row g-3 mt-1">
-              <div className="col-md-6">
-                <label className="form-label">Peso (kg)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={form.peso}
-                  onChange={(e) => updateField("peso", e.target.value)}
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Altura (cm)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={form.altura}
-                  onChange={(e) => updateField("altura", e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Género */}
-            <div className="mt-3">
-              <label className="form-label">Género</label>
-              <select
-                className="form-select"
-                value={form.genero}
-                onChange={(e) => updateField("genero", e.target.value)}
-              >
-                <option>Masculino</option>
-                <option>Femenino</option>
-                <option>Otro</option>
-              </select>
-            </div>
-
-            {/* Objetivo */}
-            <div className="mt-3">
-              <label className="form-label">Objetivo Principal</label>
-              <select
-                className="form-select"
-                value={form.objetivo}
-                onChange={(e) => updateField("objetivo", e.target.value)}
-              >
-                <option>Mantener peso</option>
-                <option>Bajar de peso</option>
-                <option>Subir masa muscular</option>
-              </select>
-            </div>
-
-            {/* Condiciones médicas  */}
-            <div className="mt-3">
-              <label className="form-label">
-                Condiciones Médicas (opcional)
-              </label>
-              <textarea
+            <div className="col">
+              <label>Peso (kg)</label>
+              <input
+                type="number"
                 className="form-control"
-                rows="2"
-                placeholder="Diabetes, hipertensión, etc."
-                value={form.condicion_medica}
-                onChange={(e) =>
-                  updateField("condicion_medica", e.target.value)
-                }
+                name="peso"
+                value={form.peso}
+                onChange={handleChange}
+                required
               />
             </div>
+          </div>
 
-            {/* Alergias  */}
-            <div className="mt-3">
-              <label className="form-label">
-                Alergias Alimentarias (opcional)
-              </label>
-              <textarea
-                className="form-control"
-                rows="2"
-                placeholder="Gluten, lácteos, mariscos, etc."
-                value={form.alergia}
-                onChange={(e) => updateField("alergia", e.target.value)}
-              />
-            </div>
+          <div className="mb-2 mt-2">
+            <label>Objetivo</label>
+            <input
+              type="text"
+              className="form-control"
+              name="objetivo"
+              value={form.objetivo}
+              onChange={handleChange}
+              placeholder="Ejemplo: Bajar peso"
+              required
+            />
+          </div>
 
-            <button
-              type="submit"
-              className="btn btn-success w-100 mt-4 auth-submit"
-              disabled={cargando}
+          <div className="mb-2">
+            <label>Género</label>
+            <select
+              className="form-control"
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              required
             >
-              {cargando ? "Creando cuenta..." : "Crear Cuenta"}
-            </button>
-          </form>
-        </div>
+              <option value="">Seleccione</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div className="mb-2">
+            <label>Condición Médica</label>
+            <textarea
+              className="form-control"
+              name="condicion_medica"
+              value={form.condicion_medica}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="mb-2">
+            <label>Alergias</label>
+            <textarea
+              className="form-control"
+              name="alergia"
+              value={form.alergia}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button
+            className="btn btn-success w-100 mt-3 auth-submit"
+            type="submit"
+            disabled={cargando}
+          >
+            {cargando ? "Creando cuenta..." : "Registrarse"}
+          </button>
+        </form>
       </div>
     </div>
   );
