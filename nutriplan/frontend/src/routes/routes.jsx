@@ -42,7 +42,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Info Nutricional protegida (si quieres que pida login) */}
+      {/* Info Nutricional protegida (si quisiera que pida login) */}
       <Route
         path="/info"
         element={

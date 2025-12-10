@@ -27,7 +27,7 @@ export default function Register() {
   const [cargando, setCargando] = useState(false);
 
   // ============================================
-  // MANEJAR CAMBIO DE INPUTS
+  // MANEJA CAMBIO DE INPUTS
   // ============================================
   const handleChange = (e) => {
     setForm({
@@ -45,7 +45,7 @@ export default function Register() {
     setCargando(true);
 
     try {
-      // 1️⃣ Registrar usuario en backend
+      // 1️⃣ Registro usuario en backend
       await http.post("usuarios/", form);
 
       // 2️⃣ Auto Login
@@ -56,15 +56,19 @@ export default function Register() {
         return;
       }
 
-      // 3️⃣ Redirigir al Dashboard
+      // 3️⃣ Redirigir al dashboard
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
-
-      if (err.response?.data?.correo) {
-        setError("El correo ya está registrado.");
+      if (err.response?.data) {
+        const data = err.response.data;
+        const firstKey = Object.keys(data)[0];
+        const firstError = Array.isArray(data[firstKey])
+          ? data[firstKey][0]
+          : data[firstKey];
+        setError(String(firstError));
       } else {
-        setError("No se pudo completar el registro.");
+        setError("Ocurrió un error al registrarse. Inténtalo de nuevo.");
       }
     } finally {
       setCargando(false);
@@ -74,15 +78,16 @@ export default function Register() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-
-        <div className="auth-title">
-          <h1>Crear Cuenta</h1>
-          <p>Bienvenido a NutriPlan</p>
-        </div>
-
-        <button className="auth-back" onClick={() => navigate("/login")}>
+        <button
+          className="auth-back"
+          type="button"
+          onClick={() => navigate("/login")}
+        >
           ← Volver al inicio de sesión
         </button>
+
+        <h1 className="auth-title">Crear Cuenta</h1>
+        <p className="auth-subtitle">Bienvenido a NutriPlan</p>
 
         {error && <p className="text-danger">{error}</p>}
 
@@ -90,7 +95,6 @@ export default function Register() {
             FORMULARIO
         ============================================ */}
         <form onSubmit={handleRegister}>
-
           <div className="mb-2">
             <label>Nombre completo</label>
             <input
@@ -165,17 +169,24 @@ export default function Register() {
             </div>
           </div>
 
+          {/* 🔽 OBJETIVO COMO DROPDOWN */}
           <div className="mb-2 mt-2">
-            <label>Objetivo</label>
-            <input
-              type="text"
+            <label>Objetivo principal</label>
+            <select
               className="form-control"
               name="objetivo"
               value={form.objetivo}
               onChange={handleChange}
-              placeholder="Ejemplo: Bajar peso"
               required
-            />
+            >
+              <option value="">Selecciona tu objetivo</option>
+              <option value="Perder peso">Perder peso</option>
+              <option value="Mantener peso">Mantener peso</option>
+              <option value="Ganar masa muscular">Ganar masa muscular</option>
+            </select>
+            <small className="text-muted">
+              Esto nos ayudará a calcular tus metas diarias.
+            </small>
           </div>
 
           <div className="mb-2">
@@ -201,6 +212,7 @@ export default function Register() {
               name="condicion_medica"
               value={form.condicion_medica}
               onChange={handleChange}
+              placeholder="Opcional"
             />
           </div>
 
@@ -211,6 +223,7 @@ export default function Register() {
               name="alergia"
               value={form.alergia}
               onChange={handleChange}
+              placeholder="Opcional"
             />
           </div>
 

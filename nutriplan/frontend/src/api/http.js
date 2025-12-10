@@ -1,4 +1,4 @@
-// src/api/http.js
+
 
 import axios from "axios";
 
@@ -10,7 +10,7 @@ const http = axios.create({
 });
 
 // ============================================================
-// INTERCEPTOR → AGREGA TOKEN A TODAS LAS PETICIONES
+//  → CON ESTO AGREGO TOKEN A TODAS LAS PETICIONES
 // ============================================================
 http.interceptors.request.use(
   (config) => {
@@ -28,18 +28,18 @@ http.interceptors.request.use(
 );
 
 // ============================================================
-// INTERCEPTOR DE RESPUESTAS → MANEJO DE ERRORES
+//  → CON ESTO MANEJO  ERRORES
 // ============================================================
 http.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Si el token expiró o no es válido → cerrar sesión
+    // Si el token expiró o no es válido → Me cierra sesión :(
     if (error.response && error.response.status === 401) {
       console.warn("Token inválido o expirado. Cerrando sesión...");
 
       localStorage.removeItem("token");
 
-      // Evita error en apps SPA cuando no estamos dentro del Router
+      // Evita error en apps SPA cuando no estoy dentro del Router
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }

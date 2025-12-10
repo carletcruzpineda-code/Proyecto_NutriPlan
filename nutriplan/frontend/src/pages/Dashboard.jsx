@@ -1,5 +1,3 @@
-// src/pages/Dashboard.jsx
-
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import http from "../api/http";
@@ -23,7 +21,7 @@ export default function Dashboard() {
   const [mostrarModal, setMostrarModal] = useState(false);
 
   // ============================================================
-  // CARGAR INDICADORES
+  // CARGA INDICADORES
   // ============================================================
   const cargarIndicadores = async () => {
     try {
@@ -35,7 +33,7 @@ export default function Dashboard() {
   };
 
   // ============================================================
-  // CARGAR REGISTROS DE CONSUMO
+  // CARGA REGISTROS DE CONSUMO
   // ============================================================
   const cargarRegistros = async () => {
     try {
@@ -51,7 +49,7 @@ export default function Dashboard() {
     cargarRegistros();
   }, []);
 
-  // Cuando agregas comida desde el modal
+  // Cuando agrego comida desde el modal
   const handleComidaAgregada = (nuevo) => {
     setRegistros((prev) => [nuevo, ...prev]);
     setMostrarModal(false);
@@ -59,15 +57,14 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-
       {/* ---------------------- HEADER ----------------------- */}
       <HeaderDashboard nombre={user?.nombre || "Usuario"} />
 
       <div className="dashboard-content">
-
         {/* ---------------------- TARJETAS ----------------------- */}
         <div className="dashboard-cards">
-          <TarjetaTotales registros={registros} />
+          {/* 👉 ahora pasamos también el usuario */}
+          <TarjetaTotales registros={registros} usuario={user} />
           <TarjetaObjetivo usuario={user} indicadores={indicadores} />
         </div>
 
@@ -77,10 +74,10 @@ export default function Dashboard() {
           <GraficoMacros registros={registros} />
         </div>
 
-        {/* ---------------------- LISTA DE COMIDAS ----------------------- */}
+        {/* ---------------------- MI LISTA DE COMIDAS ----------------------- */}
         <ListaComidas registros={registros} />
 
-        {/* ---------------------- BOTÓN AGREGAR COMIDA ----------------------- */}
+        {/* ---------------------- MI BOTÓN AGREGAR COMIDA ----------------------- */}
         <button
           className="boton-agregar-comida"
           onClick={() => setMostrarModal(true)}
@@ -89,12 +86,10 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* ---------------------- MODAL DE AGREGAR ----------------------- */}
+      {/* ---------------------- MODAL AGREGAR COMIDA ----------------------- */}
       {mostrarModal && (
         <div className="modal-overlay">
-          <div className="modal-contenido">
-            <h3>Agregar Comida</h3>
-
+          <div className="modal-content">
             <button
               className="cerrar-modal"
               onClick={() => setMostrarModal(false)}

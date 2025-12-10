@@ -229,3 +229,17 @@
 .modal-body {
   margin-top: 20px;
 }
+
+/* Texto descriptivo bajo el título de la tarjeta de totales */
+.tarjeta-totales .tarjeta-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+/* Ajuste visual para los valores de los totales (ej: 0 / 2555 kcal) */
+.tarjeta-totales .total-item .value {
+  font-weight: 600;
+  font-size: 16px;
+}

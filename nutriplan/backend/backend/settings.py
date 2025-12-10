@@ -11,9 +11,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-a7@=(d%v$p0yjb3)!9_o5*-zq3=dvc^wa8ac$9=6v664ejtq%q'
 DEBUG = True
+
 ALLOWED_HOSTS = ['*']
 
+# ============================================================
+# APPS INSTALADAS
+# ============================================================
+
 INSTALLED_APPS = [
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,16 +27,26 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Terceros
     'rest_framework',
+    'rest_framework_simplejwt',  # ❗ FALTABA
     'corsheaders',
 
+    # Apps propias
     'api',
 ]
+
+# ============================================================
+# MIDDLEWARE
+# ============================================================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    
+    # CORS debe ir antes de CommonMiddleware
     'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -38,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ============================================================
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -57,6 +74,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+# ============================================================
+# BASE DE DATOS
+# ============================================================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -65,8 +86,15 @@ DATABASES = {
         'PASSWORD': 'canelo2026',
         'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+            "charset": "utf8mb4",  # ❗ IMPORTANTE
+        }
     }
 }
+
+# ============================================================
+# VALIDADORES DE CONTRASEÑA
+# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -75,12 +103,24 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ============================================================
+# INTERNACIONALIZACIÓN
+# ============================================================
+
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'America/Costa_Rica'
 USE_I18N = True
 USE_TZ = True
 
+# ============================================================
+# STATICFILES
+# ============================================================
+
 STATIC_URL = 'static/'
+
+# ============================================================
+# DRF + JWT
+# ============================================================
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -104,6 +144,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+# ============================================================
+# CORS
+# ============================================================
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -111,10 +155,13 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+# ============================================================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Usuario personalizado
 AUTH_USER_MODEL = "api.Usuario"
 
+# Autenticación por correo
 AUTHENTICATION_BACKENDS = [
     "api.backends.CorreoBackend",
     "django.contrib.auth.backends.ModelBackend",

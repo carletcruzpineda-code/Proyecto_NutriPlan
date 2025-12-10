@@ -11,7 +11,7 @@ from .serializers import (
 
 
 # -----------------------------------
-# USUARIOS
+# AQUÍ USUARIOS
 # -----------------------------------
 class UsuarioListCreateView(generics.CreateAPIView):
     """
@@ -49,7 +49,7 @@ class RegistroConsumoListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Solo los registros del usuario logueado
+        # PUSE AQUÍ Solo los registros del usuario logueado
         return (
             RegistroConsumo.objects
             .filter(usuario=self.request.user)

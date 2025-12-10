@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [cargando, setCargando] = useState(true);
 
   // ============================================================
-  // CARGAR USUARIO DESDE LOCALSTORAGE AL ABRIR LA APP
+  // CARGO USUARIO DESDE LOCALSTORAGE AL ABRIR LA APP
   // ============================================================
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -42,10 +42,10 @@ export function AuthProvider({ children }) {
       const token = res.data.access;
       const userData = res.data.usuario; // UsuarioSerializer → incluye todos los datos
 
-      // Guardar token en localStorage
+      // Guardo token en localStorage
       localStorage.setItem("token", token);
 
-      // Guardar usuario en estado
+      // Guardo usuario en estado
       setUser(userData);
 
       return { ok: true };

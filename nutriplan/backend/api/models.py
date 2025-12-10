@@ -104,19 +104,19 @@ class RegistroConsumo(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="registros_consumo")
     alimento = models.ForeignKey(Alimento, on_delete=models.CASCADE, related_name="registros_consumo")
 
-    # el frontend sí envía esto
+    # CON ESTO el frontend sí envía esto
     cantidad_consumida = models.DecimalField(max_digits=6, decimal_places=2)
 
     # fecha automática
     fecha = models.DateField(auto_now_add=True)
 
-    # YA NO obligatorios (se calculan en serializer)
+    # se calculan en serializer
     total_calorias = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_proteinas = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_grasas = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     total_carbohidratos = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 
-    # ELIMINADO: peso_actual (tu frontend no lo usa y no es parte de la API)
+    # ELIMINADO: peso_actual (mi frontend no lo usa y no es parte de la API)
 
     def __str__(self):
         return f"{self.usuario.nombre} - {self.alimento.nombre} ({self.fecha})"

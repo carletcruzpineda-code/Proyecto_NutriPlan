@@ -1,4 +1,4 @@
-// src/pages/LandingPage.jsx
+
 
 import Hero from "../components/landing/Hero";
 import Beneficios from "../components/landing/Beneficios";

@@ -12,7 +12,7 @@ from .models import (
 
 
 # ============================================================
-# USUARIO (REGISTRO + LISTADO BÁSICO)
+# OJO USUARIO (REGISTRO + LISTADO BÁSICO)
 # ============================================================
 class UsuarioSerializer(serializers.ModelSerializer):
     """
@@ -77,7 +77,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 # ============================================================
-# LOGIN JWT
+# AQUÍ LOGIN JWT
 # ============================================================
 class LoginSerializer(TokenObtainPairSerializer):
     username_field = "correo"
@@ -114,7 +114,7 @@ class AlimentoSerializer(serializers.ModelSerializer):
 
 
 # ============================================================
-# REGISTRO DE CONSUMO
+# AQUÍ REGISTRO DE CONSUMO
 # ============================================================
 class RegistroConsumoSerializer(serializers.ModelSerializer):
     """
@@ -172,7 +172,7 @@ class RegistroConsumoSerializer(serializers.ModelSerializer):
 
 
 # ============================================================
-# INDICADORES DE PROGRESO
+# OJO AQUÍ INDICADORES DE PROGRESO
 # ============================================================
 class IndicadorProgresoSerializer(serializers.ModelSerializer):
     class Meta:
