@@ -1,66 +1,108 @@
-// src/components/dashboard/TarjetaObjetivo.jsx
-
+import { useState } from "react";
+import http from "../../api/http";
 import "../../styles/dashboard.css";
 
-
 export default function TarjetaObjetivo({ usuario, indicadores }) {
-  // ===============================
-  // DATOS DEL USUARIO
-  // ===============================
-  const objetivo = usuario?.objetivo || "Sin objetivo definido";
-  const pesoInicial = Number(usuario?.peso || 0);
-  const altura = Number(usuario?.altura || 0);
 
-  // ===============================
-  // INDICADOR MÁS RECIENTE
-  // ===============================
-  const indicador = indicadores?.length > 0 ? indicadores[0] : null;
+  if (!usuario) return null;
 
-  const pesoActual = indicador?.peso_actual
-    ? Number(indicador.peso_actual)
-    : pesoInicial;
+  const [mostrandoModal, setMostrandoModal] = useState(false);
+  const [nuevoObjetivo, setNuevoObjetivo] = useState(usuario.objetivo);
 
-  const imcActual = indicador?.imc
-    ? Number(indicador.imc)
-    : altura > 0
-    ? (pesoInicial / ((altura / 100) ** 2)).toFixed(2)
-    : "N/A";
+  // ============================================
+  // CALCULAR IMC + INTERPRETACIÓN
+  // ============================================
+  const peso = Number(usuario.peso || 0);
+  const alturaM = Number(usuario.altura || 0) / 100;
+  const imc = peso && alturaM ? (peso / (alturaM * alturaM)).toFixed(2) : "--";
 
-  const caloriasDiarias = indicador?.calorias_consumidas
-    ? Number(indicador.calorias_consumidas)
-    : 0;
+  const interpretarIMC = () => {
+    if (imc < 18.5) return "Bajo peso. Necesitas una alimentación más energética.";
+    if (imc < 25) return "Peso saludable. ¡Sigue así!";
+    if (imc < 30) return "Sobrepeso. Un plan balanceado puede ayudarte.";
+    return "Obesidad. Un déficit calórico gradual es recomendable.";
+  };
 
-  // ===============================
-  // PROGRESO
-  // ===============================
-  const diferenciaPeso = pesoInicial - pesoActual;
+  // ============================================
+  // CALCULAR PROGRESO CALÓRICO DEL DÍA
+  // ============================================
+  const caloriasConsumidasHoy = indicadores?.caloriasConsumidas || 0;
+  const caloriasObjetivo = indicadores?.caloriasObjetivo || 0;
 
-  let mensajeProgreso = "Aún no hay suficiente información.";
-  if (indicador) {
-    if (diferenciaPeso > 0) {
-      mensajeProgreso = `Has bajado ${diferenciaPeso.toFixed(1)} kg desde tu inicio.`;
-    } else if (diferenciaPeso < 0) {
-      mensajeProgreso = `Has subido ${Math.abs(diferenciaPeso).toFixed(1)} kg desde tu inicio.`;
-    } else {
-      mensajeProgreso = "Tu peso se mantiene estable.";
+  const calcularMensajeProgreso = () => {
+    if (!caloriasObjetivo) return "Aún no hay suficiente información.";
+
+    const porcentaje = Math.round((caloriasConsumidasHoy / caloriasObjetivo) * 100);
+
+    if (porcentaje < 100)
+      return `Has consumido el ${porcentaje}% de tu objetivo diario.`;
+
+    if (porcentaje === 100)
+      return "Has alcanzado tu objetivo diario.";
+
+    return `Has excedido tu objetivo por ${caloriasConsumidasHoy - caloriasObjetivo} kcal.`;
+  };
+
+  // ============================================
+  // ACTUALIZAR OBJETIVO
+  // ============================================
+  const guardarObjetivo = async () => {
+    try {
+      await http.patch(`usuarios/${usuario.id}/`, { objetivo: nuevoObjetivo });
+      usuario.objetivo = nuevoObjetivo; 
+      setMostrandoModal(false);
+    } catch (error) {
+      console.error("Error actualizando objetivo:", error);
     }
-  }
+  };
 
   return (
     <div className="tarjeta tarjeta-objetivo">
+
       <h3>Tu Objetivo</h3>
 
-      <div className="objetivo-info">
-        <p><strong>Meta:</strong> {objetivo}</p>
-        <p><strong>Peso actual:</strong> {pesoActual} kg</p>
-        <p><strong>IMC:</strong> {imcActual}</p>
-      </div>
+      <p><strong>Meta:</strong> {usuario.objetivo}</p>
+      <p><strong>Peso actual:</strong> {peso} kg</p>
+      <p><strong>IMC:</strong> {imc}</p>
+      <p className="imc-interpretacion">{interpretarIMC()}</p>
 
-      <div className="progreso-info">
-        <h4>Progreso</h4>
-        <p>{mensajeProgreso}</p>
-        <p><strong>Calorías consumidas hoy:</strong> {caloriasDiarias} kcal</p>
-      </div>
+      <h4>Progreso</h4>
+      <p>{calcularMensajeProgreso()}</p>
+
+      <br />
+
+      {/* BOTÓN CAMBIAR OBJETIVO */}
+      <button className="btn-cambiar-objetivo" onClick={() => setMostrandoModal(true)}>
+        Cambiar objetivo
+      </button>
+
+      {/* ========= MODAL PARA CAMBIAR OBJETIVO ========= */}
+      {mostrandoModal && (
+        <div className="modal-overlay">
+          <div className="modal-objetivo">
+
+            <h3>Cambiar Objetivo</h3>
+
+            <select
+              value={nuevoObjetivo}
+              onChange={(e) => setNuevoObjetivo(e.target.value)}
+            >
+              <option value="perder peso">Perder peso</option>
+              <option value="mantenerme">Mantenerme</option>
+              <option value="ganar masa muscular">Ganar masa muscular</option>
+            </select>
+
+            <div className="acciones-modal">
+              <button onClick={() => setMostrandoModal(false)}>Cancelar</button>
+              <button className="btn-guardar" onClick={guardarObjetivo}>
+                Guardar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

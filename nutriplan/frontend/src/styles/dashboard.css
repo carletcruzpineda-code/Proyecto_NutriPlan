@@ -324,3 +324,53 @@
 .btn-plan:hover {
   background: #d2f8e4;
 }
+
+.tarjeta-objetivo .imc-interpretacion {
+  font-size: 13px;
+  color: #4d7c59;
+  margin-bottom: 8px;
+}
+
+.btn-cambiar-objetivo {
+  background: #e3f6e8;
+  border: 2px solid #3cb371;
+  color: #2b6e4b;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-cambiar-objetivo:hover {
+  background: #d0f0dc;
+}
+
+.modal-objetivo {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-objetivo select {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+}
+
+.acciones-modal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-guardar {
+  background: #3cb371;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
