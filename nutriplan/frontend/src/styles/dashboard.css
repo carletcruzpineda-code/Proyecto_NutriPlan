@@ -1,22 +1,20 @@
 /* =========================
-   NutriPlan – Light Modern UI
+   NutriPlan – Modern Clean Dashboard
 ========================= */
 
 :root{
-  --bg: #f4f6f8;
+  --bg: #f5f7fa;
   --card: #ffffff;
   --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
+  --text: #0f172a;
+  --muted: #64748b;
 
   --primary: #22c55e;
   --primary-soft: #e7f8ef;
-  --info: #3b82f6;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  --info-soft: #ecfeff;
 
-  --radius: 14px;
-  --shadow: 0 10px 25px rgba(0,0,0,0.06);
+  --radius: 16px;
+  --shadow: 0 12px 30px rgba(0,0,0,0.06);
 }
 
 body{
@@ -24,105 +22,107 @@ body{
   color: var(--text);
 }
 
-/* ====== Layout ====== */
-.dashboard-container,
+/* ===== Layout ===== */
 .np-shell{
-  background: var(--bg);
   min-height: 100vh;
+  background: var(--bg);
 }
 
 .container{
   max-width: 1200px;
 }
 
-/* ====== Topbar ====== */
+/* ===== Topbar ===== */
 .np-topbar{
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px 20px;
-  margin-bottom: 24px;
+  padding: 18px 22px;
+  margin-bottom: 28px;
   display:flex;
   justify-content: space-between;
   align-items:center;
   box-shadow: var(--shadow);
 }
 
+.np-kicker{
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
 .np-title{
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .np-muted{
   color: var(--muted);
 }
 
-/* ====== Buttons ====== */
+/* ===== Buttons ===== */
 .np-btn{
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
   border: 1px solid var(--border);
   background: white;
   cursor: pointer;
 }
 
 .np-btn-primary{
-  background: var(--primary);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
   border: none;
-}
-
-.np-btn-primary:hover{
-  background: #16a34a;
 }
 
 .np-btn-ghost{
   background: white;
 }
 
-/* ====== Sections ====== */
+/* ===== Sections ===== */
 .np-section{
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .np-section-head{
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .np-h2{
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
 }
 
 .np-p{
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 
-/* ====== Grid ====== */
+/* ===== Grid ===== */
 .np-grid-3{
   display:grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .np-grid-2{
   display:grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
-/* ====== Cards ====== */
+/* ===== Cards ===== */
 .np-card{
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 20px;
   box-shadow: var(--shadow);
 }
 
-/* ====== Tarjetas internas ====== */
+/* ===== Tarjetas internas ===== */
 .tarjeta{
   background: transparent;
   border: none;
@@ -130,57 +130,52 @@ body{
 }
 
 .tarjeta h3{
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: var(--text);
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .label,
 .indicador-label{
   color: var(--muted);
+  font-size: 14px;
 }
 
 .value,
 .indicador-value{
-  font-weight: 600;
-  color: var(--text);
+  font-weight: 700;
+  font-size: 15px;
 }
 
-/* ====== Indicadores ====== */
+/* ===== Indicadores ===== */
 .tarjeta-indicadores{
   background: var(--primary-soft);
   border: 1px solid #c7eed8;
-  border-radius: 12px;
+  border-radius: 14px;
+  padding: 14px;
 }
 
 .indicador-consejo{
-  background: #ecfeff;
+  margin-top: 10px;
+  background: var(--info-soft);
   border: 1px solid #bae6fd;
   color: #0369a1;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
 }
 
-/* ====== Modal ====== */
+/* ===== ❌ OCULTAR BOTÓN VER RECOMENDACIONES ===== */
+.tarjeta button{
+  display: none !important;
+}
+
+/* ===== Modal ===== */
 .modal-overlay{
-  background: rgba(0,0,0,0.4);
+  background: rgba(15, 23, 42, 0.55);
 }
 
-.modal,
-.modal-content,
-.modal-contenido{
-  background: white;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-.cerrar-modal{
-  background: var(--danger);
-  color: white;
-  border-radius: 8px;
-  border: none;
-}
-
-/* ====== Responsive ====== */
+/* ===== Responsive ===== */
 @media (max-width: 900px){
   .np-grid-3,
   .np-grid-2{
