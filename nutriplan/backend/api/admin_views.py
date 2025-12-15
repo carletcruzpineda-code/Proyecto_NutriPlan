@@ -1,123 +1,96 @@
-# nutriplan/backend/api/admin_views.py
-
-from rest_framework import generics, status
-from rest_framework.views import APIView
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from .models import Usuario, Alimento
-from .permissions import IsAdminUsuario
 from .admin_serializers import (
     AdminUsuarioListSerializer,
-    AdminUsuarioUpdateSerializer,
-    AdminCreateUsuarioSerializer,
-    AdminPasswordSerializer,
     AdminAlimentoSerializer,
 )
 
-# =========================
-# USUARIOS (ADMIN)
-# =========================
 
-class AdminUsuarioListView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-    serializer_class = AdminUsuarioListSerializer
-    queryset = Usuario.objects.all().order_by("-fecha_registro", "-id")
-
-
-class AdminCreateAdminView(generics.CreateAPIView):
-    """
-    Registrar un admin directamente.
-    Fuerza usuario_tipo=admin + is_staff=True.
-    """
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-    serializer_class = AdminCreateUsuarioSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(usuario_tipo="admin", is_staff=True, is_active=True)
-
-
-class AdminUsuarioDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    - PATCH: actualizar campos permitidos (objetivo)
-    - DELETE: eliminar usuario
-    """
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
+class AdminUsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
+    serializer_class = AdminUsuarioListSerializer
+    permission_classes = [permissions.IsAdminUser]
 
-    def get_serializer_class(self):
-        if self.request.method in ("PATCH", "PUT"):
-            return AdminUsuarioUpdateSerializer
-        return AdminUsuarioListSerializer
+    # POST /api/admin/usuarios/crear-admin/
+    @action(detail=False, methods=["post"], url_path="crear-admin")
+    def crear_admin(self, request):
+        nombre = request.data.get("nombre")
+        correo = request.data.get("correo")
+        password = request.data.get("password")
 
-    def destroy(self, request, *args, **kwargs):
-        user_to_delete = self.get_object()
-
-        # Evitar que un admin se borre a sí mismo
-        if user_to_delete.id == request.user.id:
+        if not nombre or not correo or not password:
             return Response(
-                {"detail": "No puedes eliminar tu propio usuario admin."},
-                status=status.HTTP_400_BAD_REQUEST
+                {"detail": "nombre, correo y password son obligatorios"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return super().destroy(request, *args, **kwargs)
+        if Usuario.objects.filter(correo=correo).exists():
+            return Response(
+                {"detail": "Ya existe un usuario con ese correo"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = Usuario(
+            nombre=nombre,
+            correo=correo,
+
+            # 🔐 CAMPOS OBLIGATORIOS DEL MODELO (DEFAULTS SEGUROS)
+            edad=0,
+            altura=0,
+            peso=0,
+            objetivo="admin",
+            genero="otro",
+
+            usuario_tipo="admin",
+            is_staff=True,
+            is_superuser=False,
+        )
+        user.set_password(password)
+        user.save()
+
+        return Response(
+            AdminUsuarioListSerializer(user).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    # PATCH /api/admin/usuarios/{id}/promote/
+    @action(detail=True, methods=["patch"], url_path="promote")
+    def promote(self, request, pk=None):
+        user = self.get_object()
+        user.usuario_tipo = "admin"
+        user.is_staff = True
+        user.save()
+
+        return Response(
+            {"detail": "Usuario promovido a admin"},
+            status=status.HTTP_200_OK,
+        )
+
+    # PATCH /api/admin/usuarios/{id}/update-objetivo/
+    @action(detail=True, methods=["patch"], url_path="update-objetivo")
+    def update_objetivo(self, request, pk=None):
+        user = self.get_object()
+        objetivo = request.data.get("objetivo")
+
+        if objetivo is None or str(objetivo).strip() == "":
+            return Response(
+                {"detail": "objetivo es requerido"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.objetivo = objetivo
+        user.save()
+
+        return Response(
+            AdminUsuarioListSerializer(user).data,
+            status=status.HTTP_200_OK,
+        )
 
 
-class AdminUsuarioPromoteView(APIView):
-    """
-    Convertir usuario normal en admin.
-    """
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-
-    def patch(self, request, pk):
-        try:
-            u = Usuario.objects.get(pk=pk)
-        except Usuario.DoesNotExist:
-            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-        # No promover si ya es admin
-        if getattr(u, "usuario_tipo", "") == "admin" or getattr(u, "is_staff", False):
-            return Response({"detail": "El usuario ya es admin."}, status=status.HTTP_200_OK)
-
-        u.usuario_tipo = "admin"
-        u.is_staff = True
-        u.save()
-
-        return Response({"detail": "Usuario promovido a admin."}, status=status.HTTP_200_OK)
-
-
-class AdminUsuarioPasswordView(APIView):
-    """
-    Cambiar contraseña de un usuario.
-    """
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-
-    def post(self, request, pk):
-        try:
-            u = Usuario.objects.get(pk=pk)
-        except Usuario.DoesNotExist:
-            return Response({"detail": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = AdminPasswordSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        u.set_password(serializer.validated_data["new_password"])
-        u.save()
-
-        return Response({"detail": "Contraseña actualizada."}, status=status.HTTP_200_OK)
-
-
-# =========================
-# ALIMENTOS (ADMIN)
-# =========================
-
-class AdminAlimentoListCreateView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-    serializer_class = AdminAlimentoSerializer
-    queryset = Alimento.objects.all().order_by("nombre", "id")
-
-
-class AdminAlimentoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUsuario]
-    serializer_class = AdminAlimentoSerializer
+class AdminAlimentoViewSet(viewsets.ModelViewSet):
     queryset = Alimento.objects.all()
+    serializer_class = AdminAlimentoSerializer
+    permission_classes = [permissions.IsAdminUser]

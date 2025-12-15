@@ -1,5 +1,3 @@
-// src/services/adminUserService.js
-
 import api from "../api/http";
 
 export const adminUserService = {
@@ -13,30 +11,24 @@ export const adminUserService = {
     return res.data;
   },
 
+  async createAdmin({ nombre, correo, password }) {
+    const res = await api.post("/admin/usuarios/crear-admin/", {
+      nombre,
+      correo,
+      password,
+    });
+    return res.data;
+  },
+
   async promoteUser(id) {
-    const res = await api.patch(`/admin/usuarios/${id}/`, {
-      usuario_tipo: "admin",
-    });
+    const res = await api.patch(`/admin/usuarios/${id}/promote/`);
     return res.data;
   },
 
-  async updatePassword(id, newPassword) {
-    const res = await api.post(`/admin/usuarios/${id}/password/`, {
-      new_password: newPassword,
-    });
-    return res.data;
-  },
-
+  // ✅ PARA CAMBIAR OBJETIVO DESDE ADMIN DASHBOARD
   async updateObjetivo(id, objetivo) {
-    const res = await api.patch(`/admin/usuarios/${id}/`, { objetivo });
-    return res.data;
-  },
-
-  // 🔥 AQUÍ ESTÁ LA CLAVE
-  async createAdmin(payload) {
-    const res = await api.post("/usuarios/", {
-      ...payload,
-      usuario_tipo: "admin",
+    const res = await api.patch(`/admin/usuarios/${id}/update-objetivo/`, {
+      objetivo,
     });
     return res.data;
   },

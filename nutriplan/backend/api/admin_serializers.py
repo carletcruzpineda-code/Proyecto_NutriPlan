@@ -1,70 +1,60 @@
-# nutriplan/backend/api/admin_serializers.py
-
 from rest_framework import serializers
 from .models import Usuario, Alimento
+
+
+# =========================
+# USUARIOS (ADMIN)
+# =========================
 
 class AdminUsuarioListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = [
+        fields = (
             "id",
-            "usuario_tipo",
             "nombre",
             "correo",
-            "edad",
-            "altura",
-            "peso",
+            "usuario_tipo",
             "objetivo",
-            "genero",
-            "condicion_medica",
-            "alergia",
             "is_staff",
-            "is_active",
-            "fecha_registro",
-        ]
+        )
 
 
-class AdminUsuarioUpdateSerializer(serializers.ModelSerializer):
-    """
-    Actualizaciones permitidas por admin (por ahora: objetivo).
-    Puedes agregar más campos luego si lo ocupas.
-    """
-    class Meta:
-        model = Usuario
-        fields = ["objetivo"]
-
-
-class AdminCreateUsuarioSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
+class CrearAdminSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = Usuario
-        fields = [
+        fields = (
             "id",
-            "usuario_tipo",
             "nombre",
             "correo",
-            "edad",
-            "altura",
-            "peso",
-            "objetivo",
-            "genero",
-            "condicion_medica",
-            "alergia",
             "password",
-        ]
+        )
+
+    def validate_correo(self, value):
+        if Usuario.objects.filter(correo=value).exists():
+            raise serializers.ValidationError(
+                "Ya existe un usuario con este correo."
+            )
+        return value
 
     def create(self, validated_data):
         password = validated_data.pop("password")
-        user = Usuario.objects.create(**validated_data)
+
+        user = Usuario(
+            **validated_data,
+            usuario_tipo="admin",
+            is_staff=True,
+            is_superuser=False,
+        )
         user.set_password(password)
         user.save()
         return user
 
 
-class AdminPasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(write_only=True, required=True, min_length=6)
-
+# =========================
+# ALIMENTOS (ADMIN)
+# =========================
 
 class AdminAlimentoSerializer(serializers.ModelSerializer):
     class Meta:

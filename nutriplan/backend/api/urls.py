@@ -1,34 +1,46 @@
-# nutriplan/backend/api/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-from django.urls import path
+from .views import (
+    UsuarioListCreateView,
+    AlimentoListCreateView,
+    RegistroConsumoListCreateView,
+    RegistroConsumoDetailView,
+    IndicadorProgresoListView,
+)
 from .auth_views import LoginView, MeView
-from . import views
-from . import admin_views
+from .admin_views import AdminUsuarioViewSet, AdminAlimentoViewSet
+
+router = DefaultRouter()
+router.register(r"admin/usuarios", AdminUsuarioViewSet, basename="admin-usuarios")
+router.register(r"admin/alimentos", AdminAlimentoViewSet, basename="admin-alimentos")
 
 urlpatterns = [
-    # autenticación
-    path("auth/login/", LoginView.as_view()),
-    path("auth/me/", MeView.as_view()),
-
-    # endpoints principales (usuario normal)
-    path("usuarios/", views.UsuarioListCreateView.as_view()),
-    path("alimentos/", views.AlimentoListCreateView.as_view()),
-    path("registros/", views.RegistroConsumoListCreateView.as_view()),
-    path("registros/<int:pk>/", views.RegistroConsumoDetailView.as_view()),
-    path("indicadores/", views.IndicadorProgresoListView.as_view()),
+    # =========================
+    # REGISTRO / AUTH
+    # =========================
+    path("usuarios/", UsuarioListCreateView.as_view(), name="registro-usuario"),
+    path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/me/", MeView.as_view(), name="me"),
 
     # =========================
-    # ADMIN API
+    # ALIMENTOS
     # =========================
-    path("admin/usuarios/", admin_views.AdminUsuarioListView.as_view()),
-    path("admin/usuarios/crear-admin/", admin_views.AdminCreateAdminView.as_view()),
+    path("alimentos/", AlimentoListCreateView.as_view()),
 
-    # PATCH objetivo / DELETE usuario
-    path("admin/usuarios/<int:pk>/", admin_views.AdminUsuarioDetailView.as_view()),
+    # =========================
+    # REGISTROS CONSUMO
+    # =========================
+    path("registros/", RegistroConsumoListCreateView.as_view()),
+    path("registros/<int:pk>/", RegistroConsumoDetailView.as_view()),
 
-    path("admin/usuarios/<int:pk>/promote/", admin_views.AdminUsuarioPromoteView.as_view()),
-    path("admin/usuarios/<int:pk>/password/", admin_views.AdminUsuarioPasswordView.as_view()),
+    # =========================
+    # INDICADORES
+    # =========================
+    path("indicadores/", IndicadorProgresoListView.as_view()),
 
-    path("admin/alimentos/", admin_views.AdminAlimentoListCreateView.as_view()),
-    path("admin/alimentos/<int:pk>/", admin_views.AdminAlimentoDetailView.as_view()),
+    # =========================
+    # ADMIN (ROUTER)
+    # =========================
+    path("", include(router.urls)),
 ]
