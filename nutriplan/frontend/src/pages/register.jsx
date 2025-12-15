@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import http from "../api/http";
+// src/pages/register.jsx
+
+import { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
+import api from "../api/http";
 import "../styles/auth.css";
 
 export default function Register() {
@@ -26,46 +27,50 @@ export default function Register() {
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  // ============================================
-  // MANEJA CAMBIO DE INPUTS
-  // ============================================
+  // =========================
+  // Maneja cambios
+  // =========================
   const handleChange = (e) => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
-  // ============================================
-  // REGISTRAR USUARIO → AUTO LOGIN → REDIRIGIR
-  // ============================================
+  // =========================
+  // Registro -> AutoLogin -> Dashboard
+  // =========================
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
     setCargando(true);
 
     try {
-      // 1️⃣ Registro usuario en backend
-      await http.post("usuarios/", form);
+      // 1) Registrar usuario (con baseURL ya en /api, NO pongas /api aquí)
+      await api.post("/usuarios/", {
+        ...form,
+        // asegurar números si el backend los espera como int/float
+        edad: form.edad === "" ? "" : Number(form.edad),
+        altura: form.altura === "" ? "" : Number(form.altura),
+        peso: form.peso === "" ? "" : Number(form.peso),
+      });
 
-      // 2️⃣ Auto Login
-      const loginResult = await login(form.correo, form.password);
+      // 2) Auto login
+      await login(form.correo, form.password);
 
-      if (!loginResult.ok) {
-        setError("Registro correcto, pero no fue posible iniciar sesión.");
-        return;
-      }
-
-      // 3️⃣ Redirigir al dashboard
-      navigate("/dashboard");
+      // 3) Redirigir
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       console.error(err);
+
+      // Mostrar el primer error del backend (igual que tu original)
       if (err.response?.data) {
         const data = err.response.data;
         const firstKey = Object.keys(data)[0];
         const firstError = Array.isArray(data[firstKey])
           ? data[firstKey][0]
           : data[firstKey];
+
         setError(String(firstError));
       } else {
         setError("Ocurrió un error al registrarse. Inténtalo de nuevo.");
@@ -78,6 +83,7 @@ export default function Register() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
+        {/* Botón volver (manteniendo UX original) */}
         <button
           className="auth-back"
           type="button"
@@ -89,11 +95,8 @@ export default function Register() {
         <h1 className="auth-title">Crear Cuenta</h1>
         <p className="auth-subtitle">Bienvenido a NutriPlan</p>
 
-        {error && <p className="text-danger">{error}</p>}
+        {error && <p className="auth-error">{error}</p>}
 
-        {/* ============================================
-            FORMULARIO
-        ============================================ */}
         <form onSubmit={handleRegister}>
           <div className="mb-2">
             <label>Nombre completo</label>
@@ -169,7 +172,6 @@ export default function Register() {
             </div>
           </div>
 
-          {/* 🔽 OBJETIVO COMO DROPDOWN */}
           <div className="mb-2 mt-2">
             <label>Objetivo principal</label>
             <select
@@ -234,6 +236,11 @@ export default function Register() {
           >
             {cargando ? "Creando cuenta..." : "Registrarse"}
           </button>
+
+          {/* Link extra por si quieres (no rompe tu diseño) */}
+          <div className="auth-links" style={{ marginTop: "12px" }}>
+            <Link to="/">Volver al inicio</Link>
+          </div>
         </form>
       </div>
     </div>

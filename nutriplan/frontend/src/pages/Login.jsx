@@ -1,74 +1,69 @@
+// src/pages/Login.jsx
 
-
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/auth.css";
 
-export default function Login() {
+const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setCargando(true);
 
-    const result = await login(correo, password);
-
-    setCargando(false);
-
-    if (!result.ok) {
-      setError("Correo o contraseña incorrectos.");
-      return;
+    try {
+      await login(correo, password);
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      setError("Correo o contraseña incorrectos");
     }
-
-    navigate("/dashboard");
   };
 
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h1>Iniciar Sesión</h1>
+        <h2>Iniciar Sesión</h2>
+        <p className="auth-subtitle">
+          Accede a tu cuenta de <strong>NutriPlan</strong>
+        </p>
 
-        {error && <p className="text-danger">{error}</p>}
-
-        <form onSubmit={handleLogin}>
-          <label>Correo</label>
+        <form onSubmit={handleSubmit}>
           <input
             type="email"
+            placeholder="Correo electrónico"
             value={correo}
             onChange={(e) => setCorreo(e.target.value)}
             required
           />
 
-          <label>Contraseña</label>
           <input
             type="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
 
-          <button
-            disabled={cargando}
-            className="auth-submit"
-            type="submit"
-          >
-            {cargando ? "Ingresando..." : "Entrar"}
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="auth-button">
+            Entrar
           </button>
         </form>
 
-        <p>
-          ¿No tienes cuenta?{" "}
-          <a href="/register">Crear una cuenta</a>
-        </p>
+        <div className="auth-links">
+          <Link to="/register">¿No tienes cuenta? Regístrate</Link>
+          <Link to="/">Volver al inicio</Link>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default Login;

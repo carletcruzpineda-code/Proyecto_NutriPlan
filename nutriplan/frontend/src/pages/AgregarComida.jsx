@@ -13,7 +13,7 @@ export default function AgregarComida({ onComidaAgregada }) {
 
     setSelectedFood(null);
 
-    // Quita mensaje después de unos segundos
+    // Se Quita mensaje después de unos segundos
     setTimeout(() => setMensaje(""), 2000);
   };
 

@@ -1,91 +1,210 @@
-
-
-body {
-  background: #e9fbf5;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
+/* =========================
+   BASE
+========================= */
 
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 40px;
+  background: linear-gradient(135deg, #e9f7f2, #f4fbf8);
+  padding: 2rem 1rem;
 }
 
 .auth-card {
-  max-width: 480px;
+  background: #ffffff;
   width: 100%;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
-  padding: 24px 28px 28px;
+  max-width: 520px;
+  padding: 2.5rem 2.8rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  position: relative;
 }
 
-.auth-title {
+/* =========================
+   TITULOS
+========================= */
+
+.auth-title,
+.auth-card h1 {
   text-align: center;
-  margin-bottom: 16px;
-}
-
-.auth-title h1 {
-  font-size: 28px;
-  color: #00a870;
+  font-size: 1.8rem;
   font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #1f2d3d;
 }
 
-.auth-title p {
-  color: #6c757d;
-  margin: 0;
+.auth-subtitle {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
 }
 
-.auth-tabs {
-  display: flex;
-  border-radius: 999px;
-  background: #f3fff9;
-  padding: 3px;
-  margin-bottom: 20px;
-}
-
-.auth-tab {
-  flex: 1;
-  border-radius: 999px;
-  border: none;
-  padding: 6px 0;
-  font-size: 14px;
-  font-weight: 500;
-  background: transparent;
-  color: #6c757d;
-}
-
-.auth-tab.active {
-  background: #ffffff;
-  color: #00a870;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
+/* =========================
+   BOTON VOLVER
+========================= */
 
 .auth-back {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  border: 1px solid #d4f3e6;
-  padding: 4px 10px;
-  font-size: 13px;
-  color: #00a870;
-  background: #ffffff;
-  margin-bottom: 12px;
+  background: none;
+  border: none;
+  color: #2ecc71;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding: 0;
 }
 
-.auth-back span {
-  margin-left: 4px;
+.auth-back:hover {
+  text-decoration: underline;
 }
 
-.auth-submit {
-  background: #00a870;
-  border-color: #00a870;
+/* =========================
+   FORMULARIO
+========================= */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label {
+  font-size: 0.85rem;
   font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  display: block;
 }
 
-.auth-submit:hover {
-  background: #00925f;
-  border-color: #00925f;
+/* Inputs / Select / Textarea */
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* =========================
+   GRID (EDAD / ALTURA / PESO)
+========================= */
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.col {
+  flex: 1;
+}
+
+/* =========================
+   TEXTOS AUXILIARES
+========================= */
+
+.text-muted,
+small {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* =========================
+   ERRORES
+========================= */
+
+.auth-error,
+.text-danger {
+  background: #fdecea;
+  color: #b91c1c;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* =========================
+   BOTON PRINCIPAL
+========================= */
+
+.auth-submit,
+.auth-button,
+button[type="submit"] {
+  margin-top: 1.2rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-submit:hover,
+.auth-button:hover,
+button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(46, 204, 113, 0.35);
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+.auth-links {
+  margin-top: 1.2rem;
+  text-align: center;
+}
+
+.auth-links a {
+  font-size: 0.85rem;
+  color: #2ecc71;
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 520px) {
+  .auth-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .row {
+    flex-direction: column;
+  }
 }

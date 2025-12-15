@@ -8,9 +8,9 @@ export default function ListaComidas() {
   const [editCantidad, setEditCantidad] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ===============================
-  // CARGAR REGISTROS DEL BACKEND
-  // ===============================
+  
+  // CARGO REGISTROS DEL BACKEND
+  
   const cargarComidas = async () => {
     try {
       const res = await http.get("registros/");
@@ -24,17 +24,17 @@ export default function ListaComidas() {
     cargarComidas();
   }, []);
 
-  // ===============================
-  // HABILITAR MODO EDICIÓN
-  // ===============================
+  
+  // HABILITO MODO EDICIÓN
+  
   const iniciarEdicion = (item) => {
     setEditId(item.id);
     setEditCantidad(item.cantidad_consumida);
   };
 
-  // ===============================
-  // GUARDAR EDICIÓN (PATCH)
-  // ===============================
+  
+  // GUARDO EDICIÓN (PATCH)
+  
   const guardarEdicion = async (id) => {
     if (!editCantidad || isNaN(editCantidad) || Number(editCantidad) <= 0) {
       alert("Ingrese una cantidad válida.");
@@ -48,10 +48,10 @@ export default function ListaComidas() {
         cantidad_consumida: Number(editCantidad),
       });
 
-      // Recargar lista actualizada
+      // Recargo lista actualizada
       await cargarComidas();
 
-      // Limpiar edición
+      // Limpio edición
       setEditId(null);
       setEditCantidad("");
     } catch (error) {
@@ -62,9 +62,9 @@ export default function ListaComidas() {
     }
   };
 
-  // ===============================
-  // ELIMINAR REGISTRO
-  // ===============================
+  
+  // ELIMINO REGISTRO
+  
   const eliminarComida = async (id) => {
     if (!confirm("¿Eliminar este registro?")) return;
 

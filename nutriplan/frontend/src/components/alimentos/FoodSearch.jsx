@@ -1,4 +1,4 @@
-// src/components/alimentos/FoodSearch.jsx
+
 
 import { useEffect, useState } from "react";
 import http from "../../api/http";
@@ -8,7 +8,7 @@ export default function FoodSearch({ onSelect }) {
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Cargar alimentos una sola vez
+  // AQUÍ Cargo alimentos una sola vez
   useEffect(() => {
     const cargar = async () => {
       try {
@@ -25,7 +25,7 @@ export default function FoodSearch({ onSelect }) {
     cargar();
   }, []);
 
-  // Filtrar en frontend, pero protegido
+  // Filtro en frontend, pero protegido
   const resultados = alimentos.filter((a) => {
     const termino = busqueda.toLowerCase();
     return (

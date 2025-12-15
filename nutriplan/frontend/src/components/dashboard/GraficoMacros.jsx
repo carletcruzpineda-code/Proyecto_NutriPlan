@@ -1,4 +1,4 @@
-// src/components/dashboard/GraficoMacros.jsx
+
 
 import {
   BarChart,
@@ -13,9 +13,9 @@ import "../../styles/dashboard.css";
 
 
 export default function GraficoMacros({ registros }) {
-  // ============================================
-  // CALCULAR TOTALES DE MACROS DEL DÍA
-  // ============================================
+  
+  // CÁLCULO TOTALES DE MACROS DEL DÍA
+  
   const totales = registros.reduce(
     (acc, item) => {
       acc.carbohidratos += Number(item.total_carbohidratos || 0);
@@ -26,9 +26,9 @@ export default function GraficoMacros({ registros }) {
     { carbohidratos: 0, proteinas: 0, grasas: 0 }
   );
 
-  // ============================================
+  
   // FORMATO DE DATOS PARA RECHARTS
-  // ============================================
+ 
   const data = [
     {
       name: "Carbohidratos",

@@ -1,4 +1,4 @@
-// src/components/alimentos/FoodList.jsx
+
 
 import "./FoodList.css";
 

@@ -28,7 +28,7 @@ export default function FoodForm({ food, clearFood, onSaved }) {
 
       if (onSaved) onSaved(res.data);
 
-      // Reset
+      
       setGramos("");
       clearFood();
     } catch (err) {

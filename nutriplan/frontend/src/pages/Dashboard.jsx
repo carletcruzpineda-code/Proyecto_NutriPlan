@@ -11,7 +11,7 @@ import GraficoMacros from "../components/dashboard/GraficoMacros";
 import ListaComidas from "../components/dashboard/ListaComidas";
 import AgregarComida from "./AgregarComida";
 
-import jsPDF from "jspdf"; // 🔥 IMPORTANTE PARA GENERAR PDF
+import jsPDF from "jspdf"; // 🔥  PARA GENERAR PDF
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
@@ -21,9 +21,9 @@ export default function Dashboard() {
   const [registros, setRegistros] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
 
-  // ============================================
+  
   // CARGA INDICADORES
-  // ============================================
+  
   const cargarIndicadores = async () => {
     try {
       const res = await http.get("indicadores/");
@@ -33,9 +33,9 @@ export default function Dashboard() {
     }
   };
 
-  // ============================================
+  
   // CARGA REGISTROS DE CONSUMO
-  // ============================================
+  
   const cargarRegistros = async () => {
     try {
       const res = await http.get("registros/");
@@ -50,17 +50,17 @@ export default function Dashboard() {
     cargarRegistros();
   }, []);
 
-  // ============================================
+  
   // AGREGAR COMIDA
-  // ============================================
+  
   const handleComidaAgregada = (nuevoRegistro) => {
     setRegistros((prev) => [nuevoRegistro, ...prev]);
     setMostrarModal(false);
   };
 
-  // ============================================
+  
   //  DESCARGAR PLAN NUTRICIONAL (PDF)
-  // ============================================
+  
  const descargarPlanNutricional = () => {
   if (!user) return;
 
@@ -100,9 +100,9 @@ export default function Dashboard() {
     (calorias - caloriasProteina - caloriasGrasa) / 4
   );
 
-  // ===========================
+  
   // CREAR PDF
-  // ===========================
+  
   const doc = new jsPDF();
 
   // Encabezado
@@ -114,9 +114,9 @@ export default function Dashboard() {
 
   let y = 40;
 
-  // ===========================
+  
   // DATOS DEL USUARIO
-  // ===========================
+  
   doc.setFontSize(16);
   doc.setTextColor(30, 85, 50);
   doc.text("Datos del Usuario", 15, y);
@@ -147,9 +147,9 @@ export default function Dashboard() {
 
   y += 10;
 
-  // ===========================
+  
   // METAS DIARIAS
-  // ===========================
+  
   doc.setFontSize(16);
   doc.setTextColor(30, 85, 50);
   doc.text("Metas Nutricionales Diarias", 15, y);
@@ -167,9 +167,9 @@ export default function Dashboard() {
   doc.text(`Carbohidratos: ${carbohidratos} g`, 15, y); y += 6;
   doc.text(`Grasas: ${grasas} g`, 15, y); y += 12;
 
-  // ===========================
+  
   // RECOMENDACIÓN
-  // ===========================
+  
   doc.setFontSize(16);
   doc.setTextColor(30, 85, 50);
   doc.text("Recomendación General", 15, y);
@@ -189,9 +189,9 @@ export default function Dashboard() {
 
 
 
-  // ============================================
+  
   // UI
-  // ============================================
+  
   return (
     <div className="dashboard-container">
 

@@ -1,52 +1,36 @@
-
+// src/api/http.js
 
 import axios from "axios";
+import { authService } from "../services/authService";
 
-const http = axios.create({
-  baseURL: "http://localhost:8000/api/",
+const api = axios.create({
+  // 🔥 AQUÍ ESTABA EL PROBLEMA
+  baseURL: "http://localhost:8000/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// ============================================================
-//  → CON ESTO AGREGO TOKEN A TODAS LAS PETICIONES
-// ============================================================
-http.interceptors.request.use(
+// 🔐 Inyectar token en cada request
+api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = authService.getAccessToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
     }
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// ============================================================
-//  → CON ESTO MANEJO  ERRORES
-// ============================================================
-http.interceptors.response.use(
+// 🧯 Manejo básico de errores
+api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Si el token expiró o no es válido → Me cierra sesión :(
-    if (error.response && error.response.status === 401) {
-      console.warn("Token inválido o expirado. Cerrando sesión...");
-
-      localStorage.removeItem("token");
-
-      // Evita error en apps SPA cuando no estoy dentro del Router
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-export default http;
+export default api;

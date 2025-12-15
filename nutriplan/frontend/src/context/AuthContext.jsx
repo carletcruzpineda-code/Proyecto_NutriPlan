@@ -1,82 +1,49 @@
+// src/context/AuthContext.jsx
+
 import { createContext, useEffect, useState } from "react";
-import http from "../api/http";
+import { authService } from "../services/authService";
+import { loginService } from "../services/loginService";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cargando, setCargando] = useState(true);
 
-  // ============================================================
-  // CARGO USUARIO DESDE LOCALSTORAGE AL ABRIR LA APP
-  // ============================================================
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setCargando(false);
-      return;
+    const storedUser = authService.getUser();
+    if (storedUser) {
+      setUser(storedUser);
     }
-
-    http
-      .get("auth/me/")
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch(() => {
-        localStorage.removeItem("token");
-        setUser(null);
-      })
-      .finally(() => {
-        setCargando(false);
-      });
+    setCargando(false);
   }, []);
 
-  // ============================================================
-  // LOGIN (GUARDA TOKEN + DATOS DE USUARIO)
-  // ============================================================
   const login = async (correo, password) => {
-    try {
-      const res = await http.post("auth/login/", { correo, password });
-
-      const token = res.data.access;
-      const userData = res.data.usuario; // UsuarioSerializer → incluye todos los datos
-
-      // Guardo token en localStorage
-      localStorage.setItem("token", token);
-
-      // Guardo usuario en estado
-      setUser(userData);
-
-      return { ok: true };
-    } catch (error) {
-      console.error("Error en login:", error);
-      return { ok: false, error: "Credenciales incorrectas" };
-    }
+    const usuario = await loginService(correo, password);
+    setUser(usuario);
+    return usuario;
   };
 
-  // ============================================================
-  // LOGOUT (BORRA TOKEN Y USUARIO)
-  // ============================================================
   const logout = () => {
-    localStorage.removeItem("token");
+    authService.clearAuthData();
     setUser(null);
   };
 
-  // ============================================================
-  // PROVIDER
-  // ============================================================
   return (
     <AuthContext.Provider
       value={{
         user,
         cargando,
+        loading: cargando,
+
+        // 🔐 AUTH POR TOKEN (CLAVE)
+        isAuthenticated: !!authService.getAccessToken(),
+
         login,
         logout,
-        setUser,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};

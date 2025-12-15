@@ -65,9 +65,9 @@ function calcularObjetivos(usuario) {
 }
 
 export default function TarjetaTotales({ registros, usuario }) {
-  // ===============================
-  // CALCULAR TOTALES DEL DÍA
-  // ===============================
+  
+  // CALCULO TOTALES DEL DÍA
+  
   const totales = registros.reduce(
     (acc, item) => {
       acc.calorias += Number(item.total_calorias || 0);

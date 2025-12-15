@@ -1,8 +1,8 @@
 import "../../styles/dashboard.css";
 
 /**
- * Calcula los indicadores según el objetivo del usuario.
- * Ya tienes funciones similares en TarjetaTotales; aquí simplificamos.
+ * Calculo los indicadores según el objetivo del usuario.
+ * Ya tengo funciones similares en TarjetaTotales
  */
 function calcularIndicadores(usuario) {
   if (!usuario) return null;

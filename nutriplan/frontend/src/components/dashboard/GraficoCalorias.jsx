@@ -13,7 +13,7 @@ import "../../styles/dashboard.css";
 
 export default function GraficoCalorias({ registros }) {
   // ==========================================
-  // PREPARAR DATOS PARA EL GRÁFICO
+  // DATOS PARA EL GRÁFICO
   // ==========================================
   const data = registros
     .map((item) => {
@@ -25,7 +25,7 @@ export default function GraficoCalorias({ registros }) {
         calorias: Number(item.total_calorias || 0),
       };
     })
-    .reverse(); // Orden cronológico normal
+    .reverse(); 
 
   return (
     <div className="tarjeta tarjeta-grafico">
