@@ -1,11 +1,15 @@
 // src/routes/routes.jsx
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/Login";
-import Register from "../pages/register";
-import Dashboard from "../pages/Dashboard";
+
 import LandingPage from "../pages/LandingPage";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Dashboard from "../pages/Dashboard";
+import AdminDashboard from "../pages/AdminDashboard";
+
 import PrivateRoute from "./PrivateRoute";
+import AdminRoute from "./AdminRoute";
 
 const AppRoutes = () => {
   return (
@@ -14,7 +18,6 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* 🔐 RUTA PROTEGIDA */}
       <Route
         path="/dashboard"
         element={
@@ -24,7 +27,15 @@ const AppRoutes = () => {
         }
       />
 
-      {/* fallback */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

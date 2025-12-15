@@ -18,8 +18,11 @@ const Login = () => {
     setError("");
 
     try {
-      await login(correo, password);
-      navigate("/dashboard", { replace: true });
+      const user = await login(correo, password);
+
+      const isAdmin = user?.usuario_tipo === "admin" || user?.is_staff === true;
+
+      navigate(isAdmin ? "/admin" : "/dashboard", { replace: true });
     } catch (err) {
       setError("Correo o contraseña incorrectos");
     }
